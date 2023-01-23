@@ -44,8 +44,8 @@ fdisk /dev/sda <<EOF
 n
 p
 1
-echo -e '\013'
-echo -e '\013'
+
+
 w
 EOF
 
