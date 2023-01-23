@@ -101,7 +101,7 @@ p
 w
 EOF
 if [ $? -eq 0 ]; then
-    echo -e '\033[32mDisk partitioned.'
+    echo -e '\033[32mDisk partitioned.\033[0m\n'
 else
     echo -e '\033[31mDisk partitioning failed.\033[0m\n'
     exit 1
