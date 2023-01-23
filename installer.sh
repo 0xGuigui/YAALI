@@ -46,44 +46,67 @@ else
     exit 1
 fi
 
+# Get user infos
+echo -e '\n==============='
+echo -e 'Enter your user informations:'
+echo -e '===============\n'
+echo -e 'Username: '
+read username
+if [ -z $username ]; then
+    echo -e '\033[31mUsername cannot be empty.\033[0m\n'
+    exit 1
+fi
+echo -e 'Password: '
+read -s password
+if [ -z $password ]; then
+    echo -e '\033[31mPassword cannot be empty.\033[0m\n'
+    exit 1
+fi
+echo -e 'Hostname: '
+read hostname
+if [ -z $hostname ]; then
+    echo -e '\033[31mHostname cannot be empty.\033[0m\n'
+    exit 1
+fi
+
 # Ask partition size
 echo -e '==============='
 echo -e 'Enter the size of the partition in Mo:'
 echo -e '===============\n'
 echo -e 'Size of boot partition (default 512): '
 read boot_size
-if [ $boot_size -lt 150 ]; then
+if [[ $boot_size -lt 150 ]]; then
     echo -e '\033[31mBoot partition size must be at least 150 Mo.\033[0m\n'
     exit 1
 fi
-if [ -z $boot_size ]; then
+if [[ -z $boot_size ]]; then
     boot_size=512
 fi
 echo -e 'Size of root partition (default 1024): '
 read root_size
-if [ $root_size -lt 1024 ]; then
+if [[ $root_size -lt 1024 ]]; then
     echo -e '\033[31mRoot partition size must be at least 1024 Mo.\033[0m\n'
     exit 1
 fi
-if [ -z $root_size ]; then
+if [[ -z $root_size ]]; then
     root_size=1024
 fi
 echo -e 'Size of swap partition (default 512): '
 read swap_size
-if [ $swap_size -lt 200 ]; then
+if [[ $swap_size -lt 200 ]]; then
     echo -e '\033[31mSwap partition size must be at least 200 Mo.\033[0m\n'
     exit 1
 fi
-if [ -z $swap_size ]; then
+if [[ -z $swap_size ]]; then
     swap_size=512
 fi
 echo -e 'Size of home partition (default 1024): '
 read home_size
-if [ $home_size -lt 1024 ]; then
+if [[ $home_size -lt 1024 ]]; then
     echo -e '\033[31mHome partition size must be at least 1024 Mo.\033[0m\n'
     exit 1
 fi
-if [ -z $home_size ]; then
+if [[ -z $home_size ]]; then
     home_size=1024
 fi
 
@@ -264,20 +287,13 @@ echo -e '\n==============='
 echo -e 'Chrooting...'
 echo -e '==============='
 arch-chroot /mnt /bin/bash <<EOF
-echo -e 'ArchLinux' > /etc/hostname
+echo -e "$hostname" > /etc/hostname
 echo -e 'fr_FR.UTF-8 UTF-8' > /etc/locale.gen
 locale-gen
 echo -e 'LANG=fr_FR.UTF-8' > /etc/locale.conf
 echo -e 'KEYMAP=fr' > /etc/vconsole.conf
 ln -s /usr/share/zoneinfo/Europe/Paris /etc/localtime
 hwclock --systohc --utc
-mkinitcpio -p linux
-passwd
-pacman -S grub efibootmgr
-grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=grub
-grub-mkconfig -o /boot/grub/grub.cfg
-pacman -S networkmanager
-systemctl enable NetworkManager
 pacman -S xorg-server xorg-xinit xorg-xrandr xorg-xsetroot xorg-xset
 pacman -S xf86-video-intel
 pacman -S i3-gaps i3status i3lock i3blocks
@@ -292,6 +308,23 @@ pacman -S rofi
 pacman -S ttf-dejavu
 pacman -S ttf-liberation
 pacman -S ttf-ubuntu-font-family
+pacman -S mkinitcpio
+pacman -S linux-headers
+pacman -S linux-lts-headers
+pacman -S linux-lts
+pacman -S linux
+mkinitcpio -p linux
+echo -e 'root:$rootpassword' | chpasswd
+useradd -m -g users -G wheel -s /bin/bash "$username"
+echo -e "$username:$userpassword" | chpasswd
+echo -e '%wheel ALL=(ALL) ALL' >> /etc/sudoers
+pacman -S grub efibootmgr
+grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=grub
+grub-mkconfig -o /boot/grub/grub.cfg
+pacman -S networkmanager
+systemctl enable NetworkManager
+timedatectl set-timezone Europe/Paris
+tzdata-country-clock -c France
 EOF
 if [ $? -eq 0 ]; then
     echo -e '\033[32mChrooted.\033[0m\n'
