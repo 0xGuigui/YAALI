@@ -1,10 +1,22 @@
-#!/bin/sh
-echo -e 'Arch Installer'
+#!/bin/bash
+echo -e "\033[34mArchLinuxInstaller\033[0m"
 echo -e '==============='
 echo -e 'This script will install Arch Linux on your computer.'
 echo -e 'It will erase all data on the disk.'
 echo -e 'Press any key to continue.'
 read -n 1
+
+# Check if the script is runned on Arch Linux
+echo -e '\n==============='
+echo -e 'Checking if the script is runned on Arch Linux...'
+echo -e '==============='
+if [ -f /etc/arch-release ]; then
+    echo -e '\033[32mThe script is runned on Arch Linux.\033[0m\n'
+else
+    echo -e '\033[31mThe script is not runned on Arch Linux.\033[0m\n'
+    echo -e '\033[31mPlease run the script on Arch Linux.\033[0m\n'
+    exit 1
+fi
 
 # Set the keyboard layout
 echo -e '\n==============='
@@ -17,7 +29,6 @@ else
     echo -e '\033[31mKeyboard layout setting failed.\033[0m\n'
     exit 1
 fi
-
 
 # Connect to the internet
 echo -e '==============='
@@ -45,6 +56,37 @@ else
     echo -e '\033[31mPlease check your internet connection and try again.\033[0m\n'
     exit 1
 fi
+
+# Formatting the disks to remove all data and all partitions
+echo -e '\n==============='
+echo -e 'Formatting the disks...'
+echo -e '==============='
+echo -e 'WARNING: This will erase all data on the disk.'
+echo -e 'Press any key to continue.'
+read -n 1
+echo -e '\n'
+mkfs.ext4 /dev/sda1
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mDisk formatted.\033[0m\n'
+else
+    echo -e '\033[31mDisk formatting failed.\033[0m\n'
+    exit 1
+fi
+parted /dev/sda rm 1
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mPartitions removed.\033[0m\n'
+else
+    echo -e '\033[31mPartition removal failed.\033[0m\n'
+    exit 1
+fi
+parted /dev/sda mklabel msdos
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mPartitions deleted.\033[0m\n'
+else
+    echo -e '\033[31mPartition deletion failed.\033[0m\n'
+    exit 1
+fi
+
 
 # Get user infos
 echo -e '\n==============='
@@ -111,18 +153,35 @@ if [[ -z $home_size ]]; then
 fi
 
 # Partition the disks
+# echo -e '\n==============='
+# echo -e 'Partitioning the disks...'
+# echo -e '==============='
+# fdisk /dev/sda <<EOF
+
+# n
+# p
+# 1
+
+
+# w
+# EOF
+# if [ $? -eq 0 ]; then
+#     echo -e '\033[32mDisk partitioned.\033[0m\n'
+# else
+#     echo -e '\033[31mDisk partitioning failed.\033[0m\n'
+#     exit 1
+# fi
 echo -e '\n==============='
 echo -e 'Partitioning the disks...'
 echo -e '==============='
-fdisk /dev/sda <<EOF
-
-n
-p
-1
-
-
-w
-EOF
+parted /dev/sda mklabel gpt
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mDisk partitioned.\033[0m\n'
+else
+    echo -e '\033[31mDisk partitioning failed.\033[0m\n'
+    exit 1
+fi
+parted /dev/sda mkpart primary ext4 0% 100%
 if [ $? -eq 0 ]; then
     echo -e '\033[32mDisk partitioned.\033[0m\n'
 else
@@ -288,43 +347,271 @@ echo -e 'Chrooting...'
 echo -e '==============='
 arch-chroot /mnt /bin/bash <<EOF
 echo -e "$hostname" > /etc/hostname
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mHostname set.\033[0m\n'
+else
+    echo -e '\033[31mHostname setting failed.\033[0m\n'
+    exit 1
+fi
 echo -e 'fr_FR.UTF-8 UTF-8' > /etc/locale.gen
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mLocale generated.\033[0m\n'
+else
+    echo -e '\033[31mLocale generation failed.\033[0m\n'
+    exit 1
+fi
 locale-gen
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mLocale generated.\033[0m\n'
+else
+    echo -e '\033[31mLocale generation failed.\033[0m\n'
+    exit 1
+fi
 echo -e 'LANG=fr_FR.UTF-8' > /etc/locale.conf
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mLocale set.\033[0m\n'
+else
+    echo -e '\033[31mLocale setting failed.\033[0m\n'
+    exit 1
+fi
 echo -e 'KEYMAP=fr' > /etc/vconsole.conf
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mKeymap set.\033[0m\n'
+else
+    echo -e '\033[31mKeymap setting failed.\033[0m\n'
+    exit 1
+fi
 ln -s /usr/share/zoneinfo/Europe/Paris /etc/localtime
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mTimezone set.\033[0m\n'
+else
+    echo -e '\033[31mTimezone setting failed.\033[0m\n'
+    exit 1
+fi
 hwclock --systohc --utc
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mHardware clock set.\033[0m\n'
+else
+    echo -e '\033[31mHardware clock setting failed.\033[0m\n'
+    exit 1
+fi
 pacman -S xorg-server xorg-xinit xorg-xrandr xorg-xsetroot xorg-xset
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mXorg installed.\033[0m\n'
+else
+    echo -e '\033[31mXorg installation failed.\033[0m\n'
+    exit 1
+fi
 pacman -S xf86-video-intel
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mXorg video driver installed.\033[0m\n'
+else
+    echo -e '\033[31mXorg video driver installation failed.\033[0m\n'
+    exit 1
+fi
 pacman -S i3-gaps i3status i3lock i3blocks
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mI3 installed.\033[0m\n'
+else
+    echo -e '\033[31mI3 installation failed.\033[0m\n'
+    exit 1
+fi
 pacman -S dmenu
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mDmenu installed.\033[0m\n'
+else
+    echo -e '\033[31mDmenu installation failed.\033[0m\n'
+    exit 1
+fi
 pacman -S rxvt-unicode
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mRxvt-unicode installed.\033[0m\n'
+else
+    echo -e '\033[31mRxvt-unicode installation failed.\033[0m\n'
+    exit 1
+fi
 pacman -S firefox
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mFirefox installed.\033[0m\n'
+else
+    echo -e '\033[31mFirefox installation failed.\033[0m\n'
+    exit 1
+fi
 pacman -S alsa-utils pulseaudio pulseaudio-alsa
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mAlsa-utils installed.\033[0m\n'
+else
+    echo -e '\033[31mAlsa-utils installation failed.\033[0m\n'
+    exit 1
+fi
 pacman -S pavucontrol
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mPavucontrol installed.\033[0m\n'
+else
+    echo -e '\033[31mPavucontrol installation failed.\033[0m\n'
+    exit 1
+fi
 pacman -S feh
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mFeh installed.\033[0m\n'
+else
+    echo -e '\033[31mFeh installation failed.\033[0m\n'
+    exit 1
+fi
 pacman -S scrot
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mScrot installed.\033[0m\n'
+else
+    echo -e '\033[31mScrot installation failed.\033[0m\n'
+    exit 1
+fi
 pacman -S rofi
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mRofi installed.\033[0m\n'
+else
+    echo -e '\033[31mRofi installation failed.\033[0m\n'
+    exit 1
+fi
 pacman -S ttf-dejavu
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mDejavu fonts installed.\033[0m\n'
+else
+    echo -e '\033[31mDejavu fonts installation failed.\033[0m\n'
+    exit 1
+fi
 pacman -S ttf-liberation
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mLiberation fonts installed.\033[0m\n'
+else
+    echo -e '\033[31mLiberation fonts installation failed.\033[0m\n'
+    exit 1
+fi
 pacman -S ttf-ubuntu-font-family
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mUbuntu fonts installed.\033[0m\n'
+else
+    echo -e '\033[31mUbuntu fonts installation failed.\033[0m\n'
+    exit 1
+fi
 pacman -S mkinitcpio
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mMkinitcpio installed.\033[0m\n'
+else
+    echo -e '\033[31mMkinitcpio installation failed.\033[0m\n'
+    exit 1
+fi
 pacman -S linux-headers
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mLinux headers installed.\033[0m\n'
+else
+    echo -e '\033[31mLinux headers installation failed.\033[0m\n'
+    exit 1
+fi
 pacman -S linux-lts-headers
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mLinux LTS headers installed.\033[0m\n'
+else
+    echo -e '\033[31mLinux LTS headers installation failed.\033[0m\n'
+    exit 1
+fi
 pacman -S linux-lts
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mLinux LTS installed.\033[0m\n'
+else
+    echo -e '\033[31mLinux LTS installation failed.\033[0m\n'
+    exit 1
+fi
 pacman -S linux
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mLinux installed.\033[0m\n'
+else
+    echo -e '\033[31mLinux installation failed.\033[0m\n'
+    exit 1
+fi
 mkinitcpio -p linux
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mLinux initcpio generated.\033[0m\n'
+else
+    echo -e '\033[31mLinux initcpio generation failed.\033[0m\n'
+    exit 1
+fi
 echo -e 'root:$rootpassword' | chpasswd
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mRoot password set.\033[0m\n'
+else
+    echo -e '\033[31mRoot password setting failed.\033[0m\n'
+    exit 1
+fi
 useradd -m -g users -G wheel -s /bin/bash "$username"
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mUser created.\033[0m\n'
+else
+    echo -e '\033[31mUser creation failed.\033[0m\n'
+    exit 1
+fi
 echo -e "$username:$userpassword" | chpasswd
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mUser password set.\033[0m\n'
+else
+    echo -e '\033[31mUser password setting failed.\033[0m\n'
+    exit 1
+fi
 echo -e '%wheel ALL=(ALL) ALL' >> /etc/sudoers
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mSudoers file edited.\033[0m\n'
+else
+    echo -e '\033[31mSudoers file edition failed.\033[0m\n'
+    exit 1
+fi
 pacman -S grub efibootmgr
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mGrub installed.\033[0m\n'
+else
+    echo -e '\033[31mGrub installation failed.\033[0m\n'
+    exit 1
+fi
 grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=grub
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mGrub installed.\033[0m\n'
+else
+    echo -e '\033[31mGrub installation failed.\033[0m\n'
+    exit 1
+fi
 grub-mkconfig -o /boot/grub/grub.cfg
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mGrub config generated.\033[0m\n'
+else
+    echo -e '\033[31mGrub config generation failed.\033[0m\n'
+    exit 1
+fi
 pacman -S networkmanager
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mNetworkManager installed.\033[0m\n'
+else
+    echo -e '\033[31mNetworkManager installation failed.\033[0m\n'
+    exit 1
+fi
 systemctl enable NetworkManager
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mNetworkManager enabled.\033[0m\n'
+else
+    echo -e '\033[31mNetworkManager enabling failed.\033[0m\n'
+    exit 1
+fi
 timedatectl set-timezone Europe/Paris
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mTimezone set.\033[0m\n'
+else
+    echo -e '\033[31mTimezone setting failed.\033[0m\n'
+    exit 1
+fi
 tzdata-country-clock -c France
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mTimezone set.\033[0m\n'
+else
+    echo -e '\033[31mTimezone setting failed.\033[0m\n'
+    exit 1
+fi
 EOF
 if [ $? -eq 0 ]; then
     echo -e '\033[32mChrooted.\033[0m\n'
