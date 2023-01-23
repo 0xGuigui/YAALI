@@ -1,4 +1,5 @@
-echo "Arch Installer"
+#!/bin/bash
+"Arch Installer"
 echo "==============="
 echo "This script will install Arch Linux on your computer."
 echo "It will erase all data on the disk."
