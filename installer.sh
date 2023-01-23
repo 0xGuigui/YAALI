@@ -1,81 +1,81 @@
 #!/bin/sh
-'Arch Installer'
-echo '==============='
-echo 'This script will install Arch Linux on your computer.'
-echo 'It will erase all data on the disk.'
-echo 'Press any key to continue.'
+echo -e 'Arch Installer'
+echo -e '==============='
+echo -e 'This script will install Arch Linux on your computer.'
+echo -e 'It will erase all data on the disk.'
+echo -e 'Press any key to continue.'
 read -n 1
 
 # Set the keyboard layout
-echo '\n==============='
-echo 'Setting the keyboard layout...'
-echo '==============='
+echo -e '\n==============='
+echo -e 'Setting the keyboard layout...'
+echo -e '==============='
 loadkeys fr
-echo 'Keyboard layout set to fr.\n'
+echo -e 'Keyboard layout set to fr.\n'
 
 
 # Connect to the internet
-echo '==============='
-echo 'Connecting to the internet...'
-echo '===============\n'
+echo -e '==============='
+echo -e 'Connecting to the internet...'
+echo -e '===============\n'
 ping -c 3 archlinux.org > /dev/null
 if [ $? -eq 0 ]; then
-    echo 'Connected to the internet.'
+    echo -e 'Connected to the internet.'
 else
-    echo 'Not connected to the internet.'
-    echo 'Please connect to the internet and try again.'
+    echo -e 'Not connected to the internet.'
+    echo -e 'Please connect to the internet and try again.'
     exit 1
 fi
 
 # Update the system clock
-echo '\n==============='
-echo 'Updating the system clock...'
-echo '==============='
+echo -e '\n==============='
+echo -e 'Updating the system clock...'
+echo -e '==============='
 timedatectl set-ntp true
 timedatectl status | grep 'System clock synchronized: yes' > /dev/null
 if [ $? -eq 0 ]; then
-    echo 'Clock is synchronized.\n'
+    echo -e 'Clock is synchronized.\n'
 else
-    echo 'Clock is not synchronized.'
-    echo 'Please check your internet connection and try again.'
+    echo -e 'Clock is not synchronized.'
+    echo -e 'Please check your internet connection and try again.'
     exit 1
 fi
 
 # Ask partition size
-echo '==============='
-echo 'Enter the size of the partition in Mo:'
-echo '===============\n'
-echo 'Size of boot partition (default 512): '
+echo -e '==============='
+echo -e 'Enter the size of the partition in Mo:'
+echo -e '===============\n'
+echo -e 'Size of boot partition (default 512): '
 read boot_size
 if [ $boot_size -lt 150 ]; then
-    echo 'Boot partition size must be at least 150 Mo.'
+    echo -e 'Boot partition size must be at least 150 Mo.'
     exit 1
 fi
 if [ -z $boot_size ]; then
     boot_size=512
 fi
-echo 'Size of root partition (default 1024): '
+echo -e 'Size of root partition (default 1024): '
 read root_size
 if [ $root_size -lt 1024 ]; then
-    echo 'Root partition size must be at least 1024 Mo.'
+    echo -e 'Root partition size must be at least 1024 Mo.'
     exit 1
 fi
 if [ -z $root_size ]; then
     root_size=1024
 fi
-echo 'Size of swap partition (default 512): '
+echo -e 'Size of swap partition (default 512): '
 read swap_size
 if [ $swap_size -lt 200 ]; then
-    echo 'Swap partition size must be at least 200 Mo.'
+    echo -e 'Swap partition size must be at least 200 Mo.'
     exit 1
 fi
 if [ -z $swap_size ]; then
     swap_size=512
 fi
-echo 'Size of home partition (default 1024): '
+echo -e 'Size of home partition (default 1024): '
 read home_size
 if [ $home_size -lt 1024 ]; then
-    echo 'Home partition size must be at least 1024 Mo.'
+    echo -e 'Home partition size must be at least 1024 Mo.'
     exit 1
 fi
 if [ -z $home_size ]; then
@@ -83,9 +83,9 @@ if [ -z $home_size ]; then
 fi
 
 # Partition the disks
-echo '\n==============='
-echo 'Partitioning the disks...'
-echo '==============='
+echo -e '\n==============='
+echo -e 'Partitioning the disks...'
+echo -e '==============='
 fdisk /dev/sda <<EOF
 
 n
@@ -96,65 +96,65 @@ p
 w
 EOF
 if [ $? -eq 0 ]; then
-    echo 'Disk partitioned.'
+    echo -e 'Disk partitioned.'
 else
-    echo 'Disk partitioning failed.'
+    echo -e 'Disk partitioning failed.'
     exit 1
 fi
-echo 'Press any key to continue.'
+echo -e 'Press any key to continue.'
 read -n 1
 
 # Create the EFI System Partition
-echo '\n==============='
-echo 'Creating the EFI System Partition...'
-echo '==============='
+echo -e '\n==============='
+echo -e 'Creating the EFI System Partition...'
+echo -e '==============='
 pvcreate /dev/sda1
 vgcreate vg1 /dev/sda1
 lvcreate -L "$boot_size"M -n boot vg1
 lvcreate -L "$root_size"M -n root vg1
 lvcreate -L "$swap_size"M -n swap vg1
 lvcreate -L "$home_size"M -n home vg1
-echo 'Press any key to continue.'
+echo -e 'Press any key to continue.'
 read -n 1
 
 # Format the partitions
-echo "\n==============="
-echo "Formatting the partitions..."
-echo "==============="
+echo -e "\n==============="
+echo -e "Formatting the partitions..."
+echo -e "==============="
 mkfs.ext4 /dev/vg1/boot
 mkfs.ext4 /dev/vg1/root
 mkfs.ext4 /dev/vg1/home
 mkswap /dev/vg1/swap
 swapon /dev/vg1/swap
-echo "Press any key to continue."
+echo -e "Press any key to continue."
 read -n 1
 
 # Mount the file systems
-echo "\n==============="
-echo "Mounting the file systems..."
-echo "==============="
+echo -e "\n==============="
+echo -e "Mounting the file systems..."
+echo -e "==============="
 mount /dev/vg1/root /mnt
 mkdir /mnt/boot
 mount /dev/vg1/boot /mnt/boot
 mkdir /mnt/home
 mount /dev/vg1/home /mnt/home
-echo "Press any key to continue."
+echo -e "Press any key to continue."
 read -n 1
 
 # Install essential packages
-echo "\n==============="
-echo "Installing essential packages..."
-echo "==============="
+echo -e "\n==============="
+echo -e "Installing essential packages..."
+echo -e "==============="
 pacstrap /mnt base base-devel
-echo "Press any key to continue."
+echo -e "Press any key to continue."
 read -n 1
 
 # Generate an fstab file
-echo "\n==============="
-echo "Generating an fstab file..."
-echo "==============="
+echo -e "\n==============="
+echo -e "Generating an fstab file..."
+echo -e "==============="
 genfstab -U /mnt >> /mnt/etc/fstab
-echo "Press any key to continue."
+echo -e "Press any key to continue."
 read -n 1
 
 # Chroot
