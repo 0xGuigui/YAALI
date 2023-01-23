@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 "Arch Installer"
 echo "==============="
 echo "This script will install Arch Linux on your computer."
@@ -101,6 +101,8 @@ else
     echo "Disk partitioning failed."
     exit 1
 fi
+echo "Press any key to continue."
+read -n 1
 
 # Create the EFI System Partition
 echo "\n==============="
@@ -112,6 +114,8 @@ lvcreate -L boot_size -n boot vg1
 lvcreate -L root_size -n root vg1
 lvcreate -L swap_size -n swap vg1
 lvcreate -L home_size -n home vg1
+echo "Press any key to continue."
+read -n 1
 
 # Format the partitions
 echo "\n==============="
@@ -122,6 +126,8 @@ mkfs.ext4 /dev/vg1/root
 mkfs.ext4 /dev/vg1/home
 mkswap /dev/vg1/swap
 swapon /dev/vg1/swap
+echo "Press any key to continue."
+read -n 1
 
 # Mount the file systems
 echo "\n==============="
@@ -132,18 +138,24 @@ mkdir /mnt/boot
 mount /dev/vg1/boot /mnt/boot
 mkdir /mnt/home
 mount /dev/vg1/home /mnt/home
+echo "Press any key to continue."
+read -n 1
 
 # Install essential packages
 echo "\n==============="
 echo "Installing essential packages..."
 echo "==============="
 pacstrap /mnt base base-devel
+echo "Press any key to continue."
+read -n 1
 
 # Generate an fstab file
 echo "\n==============="
 echo "Generating an fstab file..."
 echo "==============="
 genfstab -U /mnt >> /mnt/etc/fstab
+echo "Press any key to continue."
+read -n 1
 
 # Chroot
 echo "\n==============="
