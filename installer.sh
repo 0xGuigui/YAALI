@@ -47,8 +47,8 @@ echo "Enter the size of the partition in Mo:"
 echo "===============\n"
 echo "Size of boot partition (default 512): "
 read boot_size
-if [ $boot_size -lt 512 ]; then
-    echo "Boot partition size must be at least 512 Mo."
+if [ $boot_size -lt 150 ]; then
+    echo "Boot partition size must be at least 150 Mo."
     exit 1
 fi
 if [ -z $boot_size ]; then
@@ -65,8 +65,8 @@ if [ -z $root_size ]; then
 fi
 echo "Size of swap partition (default 512): "
 read swap_size
-if [ $swap_size -lt 512 ]; then
-    echo "Swap partition size must be at least 512 Mo."
+if [ $swap_size -lt 200 ]; then
+    echo "Swap partition size must be at least 200 Mo."
     exit 1
 fi
 if [ -z $swap_size ]; then
