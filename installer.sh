@@ -110,10 +110,10 @@ echo 'Creating the EFI System Partition...'
 echo '==============='
 pvcreate /dev/sda1
 vgcreate vg1 /dev/sda1
-lvcreate -L {boot_size}M -n boot vg1
-lvcreate -L {root_size}M -n root vg1
-lvcreate -L {swap_size}M -n swap vg1
-lvcreate -L {home_size}M -n home vg1
+lvcreate -L "$boot_size"M -n boot vg1
+lvcreate -L "$root_size"M -n root vg1
+lvcreate -L "$swap_size"M -n swap vg1
+lvcreate -L "$home_size"M -n home vg1
 echo 'Press any key to continue.'
 read -n 1
 
