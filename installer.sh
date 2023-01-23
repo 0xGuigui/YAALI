@@ -41,6 +41,7 @@ echo "==============="
 echo "Partitioning the disks..."
 echo "==============="
 fdisk /dev/sda <<EOF
+
 n
 p
 1
