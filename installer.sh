@@ -58,27 +58,27 @@ else
 fi
 
 # Formatting the disks to remove all data and all partitions
-echo -e '\n==============='
-echo -e 'Formatting the disks...'
-echo -e '==============='
-echo -e 'WARNING: This will erase all data on the disk.'
-echo -e 'Press any key to continue.'
-read -n 1
-echo -e '\n'
-umount /dev/sda1
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mDisk unmounted.\033[0m\n'
-else
-    echo -e '\033[31mDisk unmounting failed.\033[0m\n'
-    exit 1
-fi
-wipefs -a /dev/sda1
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mDisk formatted.\033[0m\n'
-else
-    echo -e '\033[31mDisk formatting failed.\033[0m\n'
-    exit 1
-fi
+# echo -e '\n==============='
+# echo -e 'Formatting the disks...'
+# echo -e '==============='
+# echo -e 'WARNING: This will erase all data on the disk.'
+# echo -e 'Press any key to continue.'
+# read -n 1
+# echo -e '\n'
+# umount /dev/sda1
+# if [ $? -eq 0 ]; then
+#     echo -e '\033[32mDisk unmounted.\033[0m\n'
+# else
+#     echo -e '\033[31mDisk unmounting failed.\033[0m\n'
+#     exit 1
+# fi
+# wipefs -a /dev/sda1
+# if [ $? -eq 0 ]; then
+#     echo -e '\033[32mDisk formatted.\033[0m\n'
+# else
+#     echo -e '\033[31mDisk formatting failed.\033[0m\n'
+#     exit 1
+# fi
 
 
 # Get user infos
