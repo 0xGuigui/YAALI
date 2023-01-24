@@ -1,5 +1,5 @@
 #!/bin/bash
-echo -e "\033[34mArchLinuxInstaller v0.2\033[0m"
+echo -e "\033[34mArchLinuxInstaller v0.3\033[0m"
 echo -e '==============='
 echo -e 'This script will install Arch Linux on your computer.'
 echo -e 'It will erase all data on the disk.'
