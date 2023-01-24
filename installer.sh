@@ -156,6 +156,9 @@ p
 1
 
 
+t
+1
+EF
 w
 EOF
 if [ $? -eq 0 ]; then
@@ -539,6 +542,7 @@ else
     echo -e '\033[31mSudoers file edition failed.\033[0m\n'
     exit 1
 fi
+pacman -S --noconfirm dosfstools
 EOF
 echo -e '\033[32mCrash here.\033[0m\n'
 # pacman -S --noconfirm grub efibootmgr
