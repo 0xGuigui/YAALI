@@ -1,6 +1,6 @@
 #!/bin/bash
 clear
-echo -e "\033[34mArchLinuxInstaller v0.11b\033[0m"
+echo -e "\033[34mArchLinuxInstaller v0.12b\033[0m"
 echo -e '==============='
 echo -e 'This script will install Arch Linux on your computer.'
 echo -e 'It will erase all data on the disk.'
@@ -59,27 +59,20 @@ else
 fi
 
 # Formatting the disks to remove all data and all partitions
-# echo -e '\n==============='
-# echo -e 'Formatting the disks...'
-# echo -e '==============='
-# echo -e 'WARNING: This will erase all data on the disk.'
-# echo -e 'Press any key to continue.'
-# read -n 1
-# echo -e '\n'
-# umount /dev/sda1
-# if [ $? -eq 0 ]; then
-#     echo -e '\033[32mDisk unmounted.\033[0m\n'
-# else
-#     echo -e '\033[31mDisk unmounting failed.\033[0m\n'
-#     exit 1
-# fi
-# wipefs -a /dev/sda1
-# if [ $? -eq 0 ]; then
-#     echo -e '\033[32mDisk formatted.\033[0m\n'
-# else
-#     echo -e '\033[31mDisk formatting failed.\033[0m\n'
-#     exit 1
-# fi
+echo -e '==============='
+echo -e 'Removing partitions from sda...'
+echo -e '==============='
+for i in $(ls /dev/sda*); do
+    if [ "$i" != "/dev/sda" ]; then
+        echo -e "Removing partition $i ..."
+        sgdisk --zap-all $i
+        if [ $? -ne 0 ]; then
+            echo -e '\033[31mFailed to remove partition $i.\033[0m\n'
+            exit 1
+        fi
+    fi
+done
+echo -e '\033[32mSuccessfully removed all partitions from sda.\033[0m\n'
 
 
 # Get user infos
