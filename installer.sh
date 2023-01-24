@@ -1,5 +1,5 @@
 #!/bin/bash
-echo -e "\033[34mArchLinuxInstaller\033[0m"
+echo -e "\033[34mArchLinuxInstaller v0.1\033[0m"
 echo -e '==============='
 echo -e 'This script will install Arch Linux on your computer.'
 echo -e 'It will erase all data on the disk.'
@@ -563,71 +563,73 @@ else
     echo -e '\033[31mSudoers file edition failed.\033[0m\n'
     exit 1
 fi
-pacman -S grub efibootmgr
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mGrub installed.\033[0m\n'
-else
-    echo -e '\033[31mGrub installation failed.\033[0m\n'
-    exit 1
-fi
-grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=grub
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mGrub installed.\033[0m\n'
-else
-    echo -e '\033[31mGrub installation failed.\033[0m\n'
-    exit 1
-fi
-grub-mkconfig -o /boot/grub/grub.cfg
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mGrub config generated.\033[0m\n'
-else
-    echo -e '\033[31mGrub config generation failed.\033[0m\n'
-    exit 1
-fi
-pacman -S networkmanager
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mNetworkManager installed.\033[0m\n'
-else
-    echo -e '\033[31mNetworkManager installation failed.\033[0m\n'
-    exit 1
-fi
-systemctl enable NetworkManager
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mNetworkManager enabled.\033[0m\n'
-else
-    echo -e '\033[31mNetworkManager enabling failed.\033[0m\n'
-    exit 1
-fi
-timedatectl set-timezone Europe/Paris
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mTimezone set.\033[0m\n'
-else
-    echo -e '\033[31mTimezone setting failed.\033[0m\n'
-    exit 1
-fi
-tzdata-country-clock -c France
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mTimezone set.\033[0m\n'
-else
-    echo -e '\033[31mTimezone setting failed.\033[0m\n'
-    exit 1
-fi
 EOF
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mChrooted.\033[0m\n'
-else
-    echo -e '\033[31mChrooting failed.\033[0m\n'
-    exit 1
-fi
+echo -e '\033[32mCrash here.\033[0m\n'
+# pacman -S grub efibootmgr
+# if [ $? -eq 0 ]; then
+#     echo -e '\033[32mGrub installed.\033[0m\n'
+# else
+#     echo -e '\033[31mGrub installation failed.\033[0m\n'
+#     exit 1
+# fi
+# grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=grub
+# if [ $? -eq 0 ]; then
+#     echo -e '\033[32mGrub installed.\033[0m\n'
+# else
+#     echo -e '\033[31mGrub installation failed.\033[0m\n'
+#     exit 1
+# fi
+# grub-mkconfig -o /boot/grub/grub.cfg
+# if [ $? -eq 0 ]; then
+#     echo -e '\033[32mGrub config generated.\033[0m\n'
+# else
+#     echo -e '\033[31mGrub config generation failed.\033[0m\n'
+#     exit 1
+# fi
+# pacman -S networkmanager
+# if [ $? -eq 0 ]; then
+#     echo -e '\033[32mNetworkManager installed.\033[0m\n'
+# else
+#     echo -e '\033[31mNetworkManager installation failed.\033[0m\n'
+#     exit 1
+# fi
+# systemctl enable NetworkManager
+# if [ $? -eq 0 ]; then
+#     echo -e '\033[32mNetworkManager enabled.\033[0m\n'
+# else
+#     echo -e '\033[31mNetworkManager enabling failed.\033[0m\n'
+#     exit 1
+# fi
+# timedatectl set-timezone Europe/Paris
+# if [ $? -eq 0 ]; then
+#     echo -e '\033[32mTimezone set.\033[0m\n'
+# else
+#     echo -e '\033[31mTimezone setting failed.\033[0m\n'
+#     exit 1
+# fi
+# tzdata-country-clock -c France
+# if [ $? -eq 0 ]; then
+#     echo -e '\033[32mTimezone set.\033[0m\n'
+# else
+#     echo -e '\033[31mTimezone setting failed.\033[0m\n'
+#     exit 1
+# fi
+# EOF
+# if [ $? -eq 0 ]; then
+#     echo -e '\033[32mChrooted.\033[0m\n'
+# else
+#     echo -e '\033[31mChrooting failed.\033[0m\n'
+#     exit 1
+# fi
 
-# Reboot
-echo -e '\n==============='
-echo -e 'Installation finished.'
-echo -e '==============='
-echo -e 'Press any key to reboot.'
-read -n 1
-reboot
+# # Reboot
+# echo -e '\n==============='
+# echo -e 'Installation finished.'
+# echo -e '==============='
+# echo -e 'Press any key to reboot.'
+# read -n 1
+# reboot
 
 
-# By the way, I'm French so I'm sorry for my English mistakes.
-# By Guigui1901
+# # By the way, I'm French so I'm sorry for my English mistakes.
+# # By Guigui1901
