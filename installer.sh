@@ -1,6 +1,6 @@
 #!/bin/bash
 clear
-echo -e "\033[34mArchLinuxInstaller v0.10\033[0m"
+echo -e "\033[34mArchLinuxInstaller v0.11\033[0m"
 echo -e '==============='
 echo -e 'This script will install Arch Linux on your computer.'
 echo -e 'It will erase all data on the disk.'
@@ -93,7 +93,7 @@ if [ -z $username ]; then
     exit 1
 fi
 echo -e 'Password: '
-read -s password
+read password
 if [ -z $password ]; then
     echo -e '\033[31mPassword cannot be empty.\033[0m\n'
     exit 1
@@ -522,7 +522,7 @@ else
     echo -e '\033[31mLinux initcpio generation failed.\033[0m\n'
     exit 1
 fi
-echo -e 'root:$rootpassword' | chpasswd
+echo -e 'root:$password' | chpasswd
 if [ $? -eq 0 ]; then
     echo -e '\033[32mRoot password set.\033[0m\n'
 else
@@ -536,7 +536,7 @@ else
     echo -e '\033[31mUser creation failed.\033[0m\n'
     exit 1
 fi
-echo -e "$username:$userpassword" | chpasswd
+echo -e "$username:$password" | chpasswd
 if [ $? -eq 0 ]; then
     echo -e '\033[32mUser password set.\033[0m\n'
 else
