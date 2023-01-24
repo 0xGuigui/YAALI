@@ -1,4 +1,5 @@
 #!/bin/bash
+clear
 echo -e "\033[34mArchLinuxInstaller v0.7\033[0m"
 echo -e '==============='
 echo -e 'This script will install Arch Linux on your computer.'
@@ -478,41 +479,6 @@ else
     echo -e '\033[31mMkinitcpio installation failed.\033[0m\n'
     exit 1
 fi
-pacman -S --noconfirm linux-headers
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mLinux headers installed.\033[0m\n'
-else
-    echo -e '\033[31mLinux headers installation failed.\033[0m\n'
-    exit 1
-fi
-pacman -S --noconfirm linux-lts-headers
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mLinux LTS headers installed.\033[0m\n'
-else
-    echo -e '\033[31mLinux LTS headers installation failed.\033[0m\n'
-    exit 1
-fi
-pacman -S --noconfirm linux-lts
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mLinux LTS installed.\033[0m\n'
-else
-    echo -e '\033[31mLinux LTS installation failed.\033[0m\n'
-    exit 1
-fi
-pacman -S --noconfirm linux
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mLinux installed.\033[0m\n'
-else
-    echo -e '\033[31mLinux installation failed.\033[0m\n'
-    exit 1
-fi
-mkinitcpio -p linux
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mLinux initcpio generated.\033[0m\n'
-else
-    echo -e '\033[31mLinux initcpio generation failed.\033[0m\n'
-    exit 1
-fi
 echo -e 'root:$rootpassword' | chpasswd
 if [ $? -eq 0 ]; then
     echo -e '\033[32mRoot password set.\033[0m\n'
@@ -631,6 +597,12 @@ if [ $? -eq 0 ]; then
 else
     echo -e '\033[31mXfce4 setting as default desktop environment failed.\033[0m\n'
     exit 1
+fi
+pacman -S --noconfirm iw wpa_supplicant dialog
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mWifi tools installed.\033[0m\n'
+else
+    echo -e '\033[31mWifi tools installation failed.\033[0m\n'
 fi
 EOF
 if [ $? -eq 0 ]; then
