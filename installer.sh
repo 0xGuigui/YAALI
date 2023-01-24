@@ -1,5 +1,5 @@
 #!/bin/bash
-echo -e "\033[34mArchLinuxInstaller v0.4\033[0m"
+echo -e "\033[34mArchLinuxInstaller v0.6\033[0m"
 echo -e '==============='
 echo -e 'This script will install Arch Linux on your computer.'
 echo -e 'It will erase all data on the disk.'
@@ -145,20 +145,19 @@ if [[ -z $home_size ]]; then
     home_size=1024
 fi
 
-Partition the disks
+# Partition the disks
 echo -e '\n==============='
 echo -e 'Partitioning the disks...'
 echo -e '==============='
 fdisk /dev/sda <<EOF
-
 n
 p
 1
 
 
 t
-1
-EF
+8e
+i
 w
 EOF
 if [ $? -eq 0 ]; then
@@ -543,15 +542,20 @@ else
     exit 1
 fi
 pacman -S --noconfirm dosfstools
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mDosfstools installed.\033[0m\n'
+else
+    echo -e '\033[31mDosfstools installation failed.\033[0m\n'
+    exit 1
+fi
+pacman -S --noconfirm grub efibootmgr
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mGrub installed.\033[0m\n'
+else
+    echo -e '\033[31mGrub installation failed.\033[0m\n'
+    exit 1
+fi
 EOF
-echo -e '\033[32mCrash here.\033[0m\n'
-# pacman -S --noconfirm grub efibootmgr
-# if [ $? -eq 0 ]; then
-#     echo -e '\033[32mGrub installed.\033[0m\n'
-# else
-#     echo -e '\033[31mGrub installation failed.\033[0m\n'
-#     exit 1
-# fi
 # grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=grub
 # if [ $? -eq 0 ]; then
 #     echo -e '\033[32mGrub installed.\033[0m\n'
