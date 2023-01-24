@@ -1,6 +1,6 @@
 #!/bin/bash
 clear
-echo -e "\033[34mArchLinuxInstaller v0.11\033[0m"
+echo -e "\033[34mArchLinuxInstaller v0.11b\033[0m"
 echo -e '==============='
 echo -e 'This script will install Arch Linux on your computer.'
 echo -e 'It will erase all data on the disk.'
@@ -374,119 +374,15 @@ else
     echo -e '\033[31mHardware clock setting failed.\033[0m\n'
     exit 1
 fi
-pacman -S --noconfirm xorg-server xorg-xinit xorg-xrandr xorg-xsetroot xorg-xset
+pacman -S --noconfirm xorg-server xorg-xinit xorg-xrandr xorg-xsetroot xorg-xset xf86-video-intel i3-gaps i3status i3lock i3blocks dmenu rxvt-unicode firefox alsa-utils pulseaudio pulseaudio-alsa pavucontrol feh scrot rofi ttf-dejavu ttf-liberation ttf-ubuntu-font-family lvm2 mdadm mkinitcpio linux linux-firmware linux-headers dosfstools grub efibootmgr networkmanager xfce4 xfce4-goodies lightdm lightdm-gtk-greeter iw wpa_supplicant dialog
 if [ $? -eq 0 ]; then
-    echo -e '\033[32mXorg installed.\033[0m\n'
+    echo -e '\033[32mAll packages installed.\033[0m\n'
 else
-    echo -e '\033[31mXorg installation failed.\033[0m\n'
-    exit 1
-fi
-pacman -S --noconfirm xf86-video-intel
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mXorg video driver installed.\033[0m\n'
-else
-    echo -e '\033[31mXorg video driver installation failed.\033[0m\n'
-    exit 1
-fi
-pacman -S --noconfirm i3-gaps i3status i3lock i3blocks
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mI3 installed.\033[0m\n'
-else
-    echo -e '\033[31mI3 installation failed.\033[0m\n'
-    exit 1
-fi
-pacman -S --noconfirm dmenu
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mDmenu installed.\033[0m\n'
-else
-    echo -e '\033[31mDmenu installation failed.\033[0m\n'
-    exit 1
-fi
-pacman -S --noconfirm rxvt-unicode
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mRxvt-unicode installed.\033[0m\n'
-else
-    echo -e '\033[31mRxvt-unicode installation failed.\033[0m\n'
-    exit 1
-fi
-pacman -S --noconfirm firefox
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mFirefox installed.\033[0m\n'
-else
-    echo -e '\033[31mFirefox installation failed.\033[0m\n'
-    exit 1
-fi
-pacman -S --noconfirm alsa-utils pulseaudio pulseaudio-alsa
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mAlsa-utils installed.\033[0m\n'
-else
-    echo -e '\033[31mAlsa-utils installation failed.\033[0m\n'
-    exit 1
-fi
-pacman -S --noconfirm pavucontrol
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mPavucontrol installed.\033[0m\n'
-else
-    echo -e '\033[31mPavucontrol installation failed.\033[0m\n'
-    exit 1
-fi
-pacman -S --noconfirm feh
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mFeh installed.\033[0m\n'
-else
-    echo -e '\033[31mFeh installation failed.\033[0m\n'
-    exit 1
-fi
-pacman -S --noconfirm scrot
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mScrot installed.\033[0m\n'
-else
-    echo -e '\033[31mScrot installation failed.\033[0m\n'
-    exit 1
-fi
-pacman -S --noconfirm rofi
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mRofi installed.\033[0m\n'
-else
-    echo -e '\033[31mRofi installation failed.\033[0m\n'
-    exit 1
-fi
-pacman -S --noconfirm ttf-dejavu
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mDejavu fonts installed.\033[0m\n'
-else
-    echo -e '\033[31mDejavu fonts installation failed.\033[0m\n'
-    exit 1
-fi
-pacman -S --noconfirm ttf-liberation
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mLiberation fonts installed.\033[0m\n'
-else
-    echo -e '\033[31mLiberation fonts installation failed.\033[0m\n'
-    exit 1
-fi
-pacman -S --noconfirm ttf-ubuntu-font-family
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mUbuntu fonts installed.\033[0m\n'
-else
-    echo -e '\033[31mUbuntu fonts installation failed.\033[0m\n'
+    echo -e '\033[31mA package installation failed.\033[0m\n'
     exit 1
 fi
 
-pacman -S --noconfirm lvm2
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mLvm2 installed.\033[0m\n'
-else
-    echo -e '\033[31mLvm2 installation failed.\033[0m\n'
-    exit 1
-fi
-pacman -S --noconfirm mdadm
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mMdadm installed.\033[0m\n'
-else
-    echo -e '\033[31mMdadm installation failed.\033[0m\n'
-    exit 1
-fi
+
 echo 'HOOKS="consolefont keyboard keymap base udev modconf block mdadm_udev encrypt lvm2 resume filesystems autodetect shutdown"' > /etc/mkinitcpio.conf
 if [ $? -eq 0 ]; then
     echo -e '\033[32mMkinitcpio hooks configured.\033[0m\n'
@@ -494,27 +390,7 @@ else
     echo -e '\033[31mMkinitcpio hooks configuration failed.\033[0m\n'
     exit 1
 fi
-pacman -S --noconfirm mkinitcpio
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mMkinitcpio installed.\033[0m\n'
-else
-    echo -e '\033[31mMkinitcpio installation failed.\033[0m\n'
-    exit 1
-fi
-pacman -S --noconfirm linux-headers
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mLinux headers installed.\033[0m\n'
-else
-    echo -e '\033[31mLinux headers installation failed.\033[0m\n'
-    exit 1
-fi
-pacman -S --noconfirm linux
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mLinux installed.\033[0m\n'
-else
-    echo -e '\033[31mLinux installation failed.\033[0m\n'
-    exit 1
-fi
+
 mkinitcpio -p linux
 if [ $? -eq 0 ]; then
     echo -e '\033[32mLinux initcpio generated.\033[0m\n'
@@ -550,20 +426,6 @@ else
     echo -e '\033[31mSudoers file edition failed.\033[0m\n'
     exit 1
 fi
-pacman -S --noconfirm dosfstools
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mDosfstools installed.\033[0m\n'
-else
-    echo -e '\033[31mDosfstools installation failed.\033[0m\n'
-    exit 1
-fi
-pacman -S --noconfirm grub efibootmgr
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mGrub installed.\033[0m\n'
-else
-    echo -e '\033[31mGrub installation failed.\033[0m\n'
-    exit 1
-fi
 grub-install --target=i386-pc /dev/sda
 if [ $? -eq 0 ]; then
     echo -e '\033[32mGrub installed.\033[0m\n'
@@ -576,13 +438,6 @@ if [ $? -eq 0 ]; then
     echo -e '\033[32mGrub config generated.\033[0m\n'
 else
     echo -e '\033[31mGrub config generation failed.\033[0m\n'
-    exit 1
-fi
-pacman -S --noconfirm networkmanager
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mNetworkManager installed.\033[0m\n'
-else
-    echo -e '\033[31mNetworkManager installation failed.\033[0m\n'
     exit 1
 fi
 systemctl enable NetworkManager
@@ -606,27 +461,6 @@ else
     echo -e '\033[31mTimezone setting failed.\033[0m\n'
     exit 1
 fi
-pacman -S --noconfirm xorg-server xorg-xinit xorg-xrandr xorg-xsetroot xorg-xset
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mXorg installed.\033[0m\n'
-else
-    echo -e '\033[31mXorg installation failed.\033[0m\n'
-    exit 1
-fi
-pacman -S --noconfirm xfce4 xfce4-goodies
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mXFCE4 installed.\033[0m\n'
-else
-    echo -e '\033[31mXFCE4 installation failed.\033[0m\n'
-    exit 1
-fi
-pacman -S --noconfirm lightdm lightdm-gtk-greeter
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mLightdm installed.\033[0m\n'
-else
-    echo -e '\033[31mLightdm installation failed.\033[0m\n'
-    exit 1
-fi
 systemctl enable lightdm
 if [ $? -eq 0 ]; then
     echo -e '\033[32mLightdm enabled.\033[0m\n'
@@ -639,13 +473,6 @@ if [ $? -eq 0 ]; then
     echo -e '\033[32mXfce4 set as default desktop environment.\033[0m\n'
 else
     echo -e '\033[31mXfce4 setting as default desktop environment failed.\033[0m\n'
-    exit 1
-fi
-pacman -S --noconfirm iw wpa_supplicant dialog
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mWifi tools installed.\033[0m\n'
-else
-    echo -e '\033[31mWifi tools installation failed.\033[0m\n'
     exit 1
 fi
 EOF
