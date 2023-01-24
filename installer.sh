@@ -1,6 +1,6 @@
 #!/bin/bash
 clear
-echo -e "\033[34mArchLinuxInstaller v0.8\033[0m"
+echo -e "\033[34mArchLinuxInstaller v0.9\033[0m"
 echo -e '==============='
 echo -e 'This script will install Arch Linux on your computer.'
 echo -e 'It will erase all data on the disk.'
@@ -500,7 +500,18 @@ else
     echo -e '\033[31mLinux initcpio generation failed.\033[0m\n'
     exit 1
 fi
+echo -e 'Press any key to continue.'
+read -n 1
+pacman -S --noconfirm linux-firmware
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mLinux firmware installed.\033[0m\n'
+else
+    echo -e '\033[31mLinux firmware installation failed.\033[0m\n'
+    exit 1
+fi
 echo -e 'root:$rootpassword' | chpasswd
+echo -e 'Press any key to continue.'
+read -n 1
 if [ $? -eq 0 ]; then
     echo -e '\033[32mRoot password set.\033[0m\n'
 else
@@ -508,6 +519,8 @@ else
     exit 1
 fi
 useradd -m -g users -G wheel -s /bin/bash "$username"
+echo -e 'Press any key to continue.'
+read -n 1
 if [ $? -eq 0 ]; then
     echo -e '\033[32mUser created.\033[0m\n'
 else
@@ -515,6 +528,8 @@ else
     exit 1
 fi
 echo -e "$username:$userpassword" | chpasswd
+echo -e 'Press any key to continue.'
+read -n 1
 if [ $? -eq 0 ]; then
     echo -e '\033[32mUser password set.\033[0m\n'
 else
@@ -522,6 +537,8 @@ else
     exit 1
 fi
 echo -e '%wheel ALL=(ALL) ALL' >> /etc/sudoers
+echo -e 'Press any key to continue.'
+read -n 1
 if [ $? -eq 0 ]; then
     echo -e '\033[32mSudoers file edited.\033[0m\n'
 else
@@ -529,6 +546,8 @@ else
     exit 1
 fi
 pacman -S --noconfirm dosfstools
+echo -e 'Press any key to continue.'
+read -n 1
 if [ $? -eq 0 ]; then
     echo -e '\033[32mDosfstools installed.\033[0m\n'
 else
@@ -536,6 +555,8 @@ else
     exit 1
 fi
 pacman -S --noconfirm grub efibootmgr
+echo -e 'Press any key to continue.'
+read -n 1
 if [ $? -eq 0 ]; then
     echo -e '\033[32mGrub installed.\033[0m\n'
 else
@@ -543,6 +564,8 @@ else
     exit 1
 fi
 grub-install --target=i386-pc /dev/sda
+echo -e 'Press any key to continue.'
+read -n 1
 if [ $? -eq 0 ]; then
     echo -e '\033[32mGrub installed.\033[0m\n'
 else
@@ -550,6 +573,8 @@ else
     exit 1
 fi
 grub-mkconfig -o /boot/grub/grub.cfg
+echo -e 'Press any key to continue.'
+read -n 1
 if [ $? -eq 0 ]; then
     echo -e '\033[32mGrub config generated.\033[0m\n'
 else
@@ -557,6 +582,8 @@ else
     exit 1
 fi
 pacman -S --noconfirm networkmanager
+echo -e 'Press any key to continue.'
+read -n 1
 if [ $? -eq 0 ]; then
     echo -e '\033[32mNetworkManager installed.\033[0m\n'
 else
@@ -564,6 +591,8 @@ else
     exit 1
 fi
 systemctl enable NetworkManager
+echo -e 'Press any key to continue.'
+read -n 1
 if [ $? -eq 0 ]; then
     echo -e '\033[32mNetworkManager enabled.\033[0m\n'
 else
@@ -571,6 +600,8 @@ else
     exit 1
 fi
 timedatectl set-timezone Europe/Paris
+echo -e 'Press any key to continue.'
+read -n 1
 if [ $? -eq 0 ]; then
     echo -e '\033[32mTimezone set.\033[0m\n'
 else
@@ -578,6 +609,8 @@ else
     exit 1
 fi
 tzdata-country-clock -c France
+echo -e 'Press any key to continue.'
+read -n 1
 if [ $? -eq 0 ]; then
     echo -e '\033[32mTimezone set.\033[0m\n'
 else
@@ -585,6 +618,8 @@ else
     exit 1
 fi
 pacman -S --noconfirm xorg-server xorg-xinit xorg-xrandr xorg-xsetroot xorg-xset
+echo -e 'Press any key to continue.'
+read -n 1
 if [ $? -eq 0 ]; then
     echo -e '\033[32mXorg installed.\033[0m\n'
 else
@@ -592,6 +627,8 @@ else
     exit 1
 fi
 pacman -S --noconfirm xfce4 xfce4-goodies
+echo -e 'Press any key to continue.'
+read -n 1
 if [ $? -eq 0 ]; then
     echo -e '\033[32mXFCE4 installed.\033[0m\n'
 else
@@ -599,6 +636,8 @@ else
     exit 1
 fi
 pacman -S --noconfirm lightdm lightdm-gtk-greeter
+echo -e 'Press any key to continue.'
+read -n 1
 if [ $? -eq 0 ]; then
     echo -e '\033[32mLightdm installed.\033[0m\n'
 else
@@ -606,6 +645,8 @@ else
     exit 1
 fi
 systemctl enable lightdm
+echo -e 'Press any key to continue.'
+read -n 1
 if [ $? -eq 0 ]; then
     echo -e '\033[32mLightdm enabled.\033[0m\n'
 else
@@ -613,6 +654,8 @@ else
     exit 1
 fi
 echo -e 'exec startxfce4' >> /home/"$username"/.xinitrc
+echo -e 'Press any key to continue.'
+read -n 1
 if [ $? -eq 0 ]; then
     echo -e '\033[32mXfce4 set as default desktop environment.\033[0m\n'
 else
@@ -620,6 +663,8 @@ else
     exit 1
 fi
 pacman -S --noconfirm iw wpa_supplicant dialog
+echo -e 'Press any key to continue.'
+read -n 1
 if [ $? -eq 0 ]; then
     echo -e '\033[32mWifi tools installed.\033[0m\n'
 else
