@@ -65,25 +65,18 @@ echo -e 'WARNING: This will erase all data on the disk.'
 echo -e 'Press any key to continue.'
 read -n 1
 echo -e '\n'
-mkfs.ext4 /dev/sda1
+umount /dev/sda1
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mDisk unmounted.\033[0m\n'
+else
+    echo -e '\033[31mDisk unmounting failed.\033[0m\n'
+    exit 1
+fi
+wipefs -a /dev/sda1
 if [ $? -eq 0 ]; then
     echo -e '\033[32mDisk formatted.\033[0m\n'
 else
     echo -e '\033[31mDisk formatting failed.\033[0m\n'
-    exit 1
-fi
-parted /dev/sda rm 1
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mPartitions removed.\033[0m\n'
-else
-    echo -e '\033[31mPartition removal failed.\033[0m\n'
-    exit 1
-fi
-parted /dev/sda mklabel msdos
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mPartitions deleted.\033[0m\n'
-else
-    echo -e '\033[31mPartition deletion failed.\033[0m\n'
     exit 1
 fi
 
@@ -152,36 +145,19 @@ if [[ -z $home_size ]]; then
     home_size=1024
 fi
 
-# Partition the disks
-# echo -e '\n==============='
-# echo -e 'Partitioning the disks...'
-# echo -e '==============='
-# fdisk /dev/sda <<EOF
-
-# n
-# p
-# 1
-
-
-# w
-# EOF
-# if [ $? -eq 0 ]; then
-#     echo -e '\033[32mDisk partitioned.\033[0m\n'
-# else
-#     echo -e '\033[31mDisk partitioning failed.\033[0m\n'
-#     exit 1
-# fi
+Partition the disks
 echo -e '\n==============='
 echo -e 'Partitioning the disks...'
 echo -e '==============='
-parted /dev/sda mklabel gpt
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mDisk partitioned.\033[0m\n'
-else
-    echo -e '\033[31mDisk partitioning failed.\033[0m\n'
-    exit 1
-fi
-parted /dev/sda mkpart primary ext4 0% 100%
+fdisk /dev/sda <<EOF
+
+n
+p
+1
+
+
+w
+EOF
 if [ $? -eq 0 ]; then
     echo -e '\033[32mDisk partitioned.\033[0m\n'
 else
@@ -565,7 +541,7 @@ else
 fi
 EOF
 echo -e '\033[32mCrash here.\033[0m\n'
-# pacman -S grub efibootmgr
+# pacman -S --noconfirm grub efibootmgr
 # if [ $? -eq 0 ]; then
 #     echo -e '\033[32mGrub installed.\033[0m\n'
 # else
