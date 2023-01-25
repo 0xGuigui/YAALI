@@ -1,6 +1,6 @@
 #!/bin/bash
 clear
-echo -e "\033[34mYet Another ArchLinux Installer v0.13\033[0m"
+echo -e "\033[34mYet Another ArchLinux Installer v0.14\033[0m"
 echo -e '==============='
 echo -e 'This script will install Arch Linux on your computer.'
 echo -e 'It will erase all data on the disk.'
@@ -91,7 +91,7 @@ if [ -z $username ]; then
     exit 1
 fi
 echo -e 'Password: '
-read password
+read -s password
 if [ -z $password ]; then
     echo -e '\033[31mPassword cannot be empty.\033[0m\n'
     exit 1
@@ -105,43 +105,59 @@ fi
 
 # Ask partition size
 echo -e '==============='
-echo -e 'Enter the size of the partition in Mo:'
+echo -e 'Enter the size of the partition in MO:'
 echo -e '===============\n'
 echo -e 'Size of boot partition (default 512): '
 read boot_size
 if [[ $boot_size -lt 150 ]]; then
-    echo -e '\033[31mBoot partition size must be at least 150 Mo.\033[0m\n'
+    echo -e '\033[31mBoot partition size must be at least 150 MO.\033[0m\n'
     exit 1
 fi
 if [[ -z $boot_size ]]; then
     boot_size=512
 fi
+if [[ ! $boot_size =~ ^[0-9]+$ ]]; then
+    echo -e '\033[31mBoot partition size must be a number.\033[0m\n'
+    exit 1
+fi
 echo -e 'Size of root partition (default 1024): '
 read root_size
 if [[ $root_size -lt 1024 ]]; then
-    echo -e '\033[31mRoot partition size must be at least 1024 Mo.\033[0m\n'
+    echo -e '\033[31mRoot partition size must be at least 1024 MO.\033[0m\n'
     exit 1
 fi
 if [[ -z $root_size ]]; then
     root_size=1024
 fi
+if [[ ! $root_size =~ ^[0-9]+$ ]]; then
+    echo -e '\033[31mRoot partition size must be a number.\033[0m\n'
+    exit 1
+fi
 echo -e 'Size of swap partition (default 512): '
 read swap_size
 if [[ $swap_size -lt 200 ]]; then
-    echo -e '\033[31mSwap partition size must be at least 200 Mo.\033[0m\n'
+    echo -e '\033[31mSwap partition size must be at least 200 MO.\033[0m\n'
     exit 1
 fi
 if [[ -z $swap_size ]]; then
     swap_size=512
 fi
+if [[ ! $swap_size =~ ^[0-9]+$ ]]; then
+    echo -e '\033[31mSwap partition size must be a number.\033[0m\n'
+    exit 1
+fi
 echo -e 'Size of home partition (default 1024): '
 read home_size
 if [[ $home_size -lt 1024 ]]; then
-    echo -e '\033[31mHome partition size must be at least 1024 Mo.\033[0m\n'
+    echo -e '\033[31mHome partition size must be at least 1024 MO.\033[0m\n'
     exit 1
 fi
 if [[ -z $home_size ]]; then
     home_size=1024
+fi
+if [[ ! $home_size =~ ^[0-9]+$ ]]; then
+    echo -e '\033[31mHome partition size must be a number.\033[0m\n'
+    exit 1
 fi
 
 # Partition the disks
