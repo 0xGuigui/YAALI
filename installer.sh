@@ -1,6 +1,11 @@
 #!/bin/bash
 clear
-echo -e "\033[34mYet Another ArchLinux Installer v0.14\033[0m"
+echo -e "\033[34m██╗░░░██╗░█████╗░░█████╗░██╗░░░░░██╗"
+echo -e "╚██╗░██╔╝██╔══██╗██╔══██╗██║░░░░░██║"
+echo -e "░╚████╔╝░███████║███████║██║░░░░░██║"
+echo -e "░░╚██╔╝░░██╔══██║██╔══██║██║░░░░░██║"
+echo -e "░░░██║░░░██║░░██║██║░░██║███████╗██║"
+echo -e "░░░╚═╝░░░╚═╝░░╚═╝╚═╝░░╚═╝╚══════╝╚═╝ v0.14\033[0m"
 echo -e '==============='
 echo -e 'This script will install Arch Linux on your computer.'
 echo -e 'It will erase all data on the disk.'
