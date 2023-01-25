@@ -1,6 +1,6 @@
 #!/bin/bash
 clear
-echo -e "\033[34mArchLinuxInstaller v0.12\033[0m"
+echo -e "\033[34mYet Another ArchLinux Installer v0.13\033[0m"
 echo -e '==============='
 echo -e 'This script will install Arch Linux on your computer.'
 echo -e 'It will erase all data on the disk.'
@@ -23,11 +23,16 @@ fi
 echo -e '\n==============='
 echo -e 'Setting the keyboard layout...'
 echo -e '==============='
-loadkeys fr
+echo -e 'Keyboard layout (default fr): '
+read keyboard_layout
+if [[ -z $keyboard_layout ]]; then
+    keyboard_layout=fr
+fi
+loadkeys $keyboard_layout
 if [ $? -eq 0 ]; then
-    echo -e '\033[32mKeyboard layout set.\033[0m\n'
+    echo -e '\033[32mKeyboard layout set to $keyboard_layout.\033[0m\n'
 else
-    echo -e '\033[31mKeyboard layout setting failed.\033[0m\n'
+    echo -e '\033[31mFailed to set the keyboard layout.\033[0m\n'
     exit 1
 fi
 
@@ -379,7 +384,6 @@ else
     rm /tmp/pacman.log
 fi
 
-
 echo 'HOOKS="consolefont keyboard keymap base udev modconf block mdadm_udev encrypt lvm2 resume filesystems autodetect shutdown"' > /etc/mkinitcpio.conf
 if [ $? -eq 0 ]; then
     echo -e '\033[32mMkinitcpio hooks configured.\033[0m\n'
@@ -470,6 +474,17 @@ if [ $? -eq 0 ]; then
     echo -e '\033[32mXfce4 set as default desktop environment.\033[0m\n'
 else
     echo -e '\033[31mXfce4 setting as default desktop environment failed.\033[0m\n'
+    exit 1
+fi
+echo -e 'Section "InputClass"
+    Identifier "system-keyboard"
+    MatchIsKeyboard "on"
+    Option "XkbLayout" "'"$keyboard_layout"'"
+EndSection' > /etc/X11/xorg.conf.d/00-keyboard.conf
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mXfce4 keymaps set.\033[0m\n'
+else
+    echo -e '\033[31mXfce4 keymaps setting failed.\033[0m\n'
     exit 1
 fi
 EOF
