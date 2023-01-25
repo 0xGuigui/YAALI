@@ -11,7 +11,7 @@ This script automates the installation process of Arch Linux on your computer. I
 ## 💬 Usage
 First, boot into the Arch Linux installation media. Then, download the script and run it:
 ```bash
-curl -L https://raw.githubusercontent.com/Guigui1901/YAALI/main/installer.sh | bash
+curl -L https://raw.githubusercontent.com/Guigui1901/YAALI/main/installer.sh > installer.sh && chmod +x installer.sh && ./installer.sh
 ```
 
 Next, just follow the instructions on the screen. The script will guide you through the installation process.
