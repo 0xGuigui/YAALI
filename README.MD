@@ -1,7 +1,7 @@
 <p>
-    <center>
+    <div align="center">
         <img src="https://i.imgur.com/bJyqTSO.png" alt="Arch Linux Logo" width="256" height="256">
-    </center>
+    </div>
 </p>
 
 
