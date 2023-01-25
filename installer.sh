@@ -1,6 +1,6 @@
 #!/bin/bash
 clear
-echo -e "\033[34mArchLinuxInstaller v0.12b\033[0m"
+echo -e "\033[34mArchLinuxInstaller v0.12\033[0m"
 echo -e '==============='
 echo -e 'This script will install Arch Linux on your computer.'
 echo -e 'It will erase all data on the disk.'
@@ -367,12 +367,16 @@ else
     echo -e '\033[31mHardware clock setting failed.\033[0m\n'
     exit 1
 fi
-pacman -S --noconfirm xorg-server xorg-xinit xorg-xrandr xorg-xsetroot xorg-xset xf86-video-intel i3-gaps i3status i3lock i3blocks dmenu rxvt-unicode firefox alsa-utils pulseaudio pulseaudio-alsa pavucontrol feh scrot rofi ttf-dejavu ttf-liberation ttf-ubuntu-font-family lvm2 mdadm mkinitcpio linux linux-firmware linux-headers dosfstools grub efibootmgr networkmanager xfce4 xfce4-goodies lightdm lightdm-gtk-greeter iw wpa_supplicant dialog
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mAll packages installed.\033[0m\n'
-else
-    echo -e '\033[31mA package installation failed.\033[0m\n'
+pacman -S --noconfirm xorg-server xorg-xinit xorg-xrandr xorg-xsetroot xorg-xset xf86-video-intel i3-gaps i3status i3lock i3blocks dmenu rxvt-unicode firefox alsa-utils pulseaudio pulseaudio-alsa pavucontrol feh scrot rofi ttf-dejavu ttf-liberation ttf-ubuntu-font-family lvm2 mdadm mkinitcpio linux linux-firmware linux-headers dosfstools grub efibootmgr networkmanager xfce4 xfce4-goodies lightdm lightdm-gtk-greeter iw wpa_supplicant dialog 2>&1 | tee /tmp/pacman.log
+if [ $? -ne 0 ]; then
+    echo -e '\033[31mOne or more package installation failed.\033[0m\n'
+    echo -e '\033[31mFailed packages: \033[0m\n'
+    grep "error:" /tmp/pacman.log
+    rm /tmp/pacman.log
     exit 1
+else
+    echo -e '\033[32mAll packages installed.\033[0m\n'
+    rm /tmp/pacman.log
 fi
 
 
@@ -480,8 +484,12 @@ fi
 echo -e '\n==============='
 echo -e 'Installation finished.'
 echo -e '==============='
+echo -e 'Thank you for using this script.'
+echo -e 'Check the script on https://github.com/Guigui1901/ArchLinuxInstaller'
+echo -e '==============='
 echo -e 'Press any key to reboot.'
 read -n 1
+umount -R /mnt
 reboot
 
 
