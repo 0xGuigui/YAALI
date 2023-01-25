@@ -5,21 +5,21 @@ echo -e "╚██╗░██╔╝██╔══██╗██╔══█�
 echo -e "░╚████╔╝░███████║███████║██║░░░░░██║"
 echo -e "░░╚██╔╝░░██╔══██║██╔══██║██║░░░░░██║"
 echo -e "░░░██║░░░██║░░██║██║░░██║███████╗██║"
-echo -e "░░░╚═╝░░░╚═╝░░╚═╝╚═╝░░╚═╝╚══════╝╚═╝ v0.16b\033[0m"
+echo -e "░░░╚═╝░░░╚═╝░░╚═╝╚═╝░░╚═╝╚══════╝╚═╝ v0.16\033[0m"
 echo -e '==============='
 echo -e 'This script will install Arch Linux on your computer.'
 echo -e 'It will erase all data on the disk.'
 echo -e 'Press any key to continue.'
 read -n 1
 
-# Check if the script is runned on Arch Linux
+# Check if the script is running on Arch Linux
 echo -e '\n==============='
-echo -e 'Checking if the script is runned on Arch Linux...'
+echo -e 'Checking if the script is running on Arch Linux...'
 echo -e '==============='
 if [ -f /etc/arch-release ]; then
-    echo -e '\033[32mThe script is runned on Arch Linux.\033[0m\n'
+    echo -e '\033[32mThe script is running on Arch Linux.\033[0m\n'
 else
-    echo -e '\033[31mThe script is not runned on Arch Linux.\033[0m\n'
+    echo -e '\033[31mThe script is not running on Arch Linux.\033[0m\n'
     echo -e '\033[31mPlease run the script on Arch Linux.\033[0m\n'
     exit 1
 fi
@@ -29,7 +29,17 @@ echo -e '\n==============='
 echo -e 'Setting the keyboard layout...'
 echo -e '==============='
 echo -e 'Keyboard layout (default fr): '
-loadkeys fr
+read keyboard_layout
+if [[ -z $keyboard_layout ]]; then
+    keyboard_layout=fr
+fi
+loadkeys $keyboard_layout
+if [ $? -eq 0 ]; then
+    echo -e '\033[32mKeyboard layout set to '$keyboard_layout'.\033[0m\n'
+else
+    echo -e '\033[31mFailed to set the keyboard layout.\033[0m\n'
+    exit 1
+fi
 
 # Connect to the internet
 echo -e '==============='
@@ -502,7 +512,7 @@ EOF
 if [ $? -eq 0 ]; then
     echo -e '\033[32mChrooted.\033[0m\n'
 else
-    echo -e '\033[31mChrooting failed.\033[0m\n'
+    echo -e '\033[31mChrooting failed.\033[te0m\n'
     exit 1
 fi
 
@@ -517,7 +527,3 @@ echo -e 'Press any key to reboot.'
 read -n 1
 umount -R /mnt
 reboot
-
-
-# # By the way, I'm French so I'm sorry for my English mistakes.
-# # By Guigui1901
