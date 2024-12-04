@@ -1,529 +1,307 @@
 #!/bin/bash
+
+# Effacer l'écran
 clear
-echo -e "\033[34m██╗░░░██╗░█████╗░░█████╗░██╗░░░░░██╗"
-echo -e "╚██╗░██╔╝██╔══██╗██╔══██╗██║░░░░░██║"
-echo -e "░╚████╔╝░███████║███████║██║░░░░░██║"
-echo -e "░░╚██╔╝░░██╔══██║██╔══██║██║░░░░░██║"
-echo -e "░░░██║░░░██║░░██║██║░░██║███████╗██║"
-echo -e "░░░╚═╝░░░╚═╝░░╚═╝╚═╝░░╚═╝╚══════╝╚═╝ v0.17\033[0m"
-echo -e '==============='
-echo -e 'This script will install Arch Linux on your computer.'
-echo -e 'It will erase all data on the disk.'
-echo -e 'Press any key to continue.'
-read -n 1
 
-# Check if the script is running on Arch Linux
-echo -e '\n==============='
-echo -e 'Checking if the script is running on Arch Linux...'
-echo -e '==============='
-if [ -f /etc/arch-release ]; then
-    echo -e '\033[32mThe script is running on Arch Linux.\033[0m\n'
-else
-    echo -e '\033[31mThe script is not running on Arch Linux.\033[0m\n'
-    echo -e '\033[31mPlease run the script on Arch Linux.\033[0m\n'
-    exit 1
-fi
+# Fonction pour afficher le logo
+display_logo() {
+    echo -e "\033[1;34m
+██╗░░░██╗░█████╗░░█████╗░██╗░░░░░██╗
+╚██╗░██╔╝██╔══██╗██╔══██╗██║░░░░░██║
+░╚████╔╝░███████║███████║██║░░░░░██║
+░░╚██╔╝░░██╔══██║██╔══██║██║░░░░░██║
+░░░██║░░░██║░░██║██║░░██║███████╗██║
+░░░╚═╝░░░╚═╝░░╚═╝╚═╝░░╚═╝╚══════╝╚═╝ v0.18\033[0m"
 
-# Set the keyboard layout
-echo -e '\n==============='
-echo -e 'Setting the keyboard layout...'
-echo -e '==============='
-echo -e 'Keyboard layout (default fr): '
-read keyboard_layout
-if [[ -z $keyboard_layout ]]; then
-    keyboard_layout=fr
-fi
-loadkeys $keyboard_layout
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mKeyboard layout set to '$keyboard_layout'.\033[0m\n'
-else
-    echo -e '\033[31mFailed to set the keyboard layout.\033[0m\n'
-    exit 1
-fi
+    echo -e "\033[1;34m========================================\033[0m"
+    echo -e "Ce script va installer Arch Linux sur votre ordinateur."
+    echo -e "\033[1;31mAttention : Toutes les données sur le disque seront effacées.\033[0m"
+    echo -e "\033[1;34m========================================\033[0m"
+    read -n 1 -s -r -p "Appuyez sur une touche pour continuer..."
+}
 
-# Connect to the internet
-echo -e '==============='
-echo -e 'Connecting to the internet...'
-echo -e '==============='
-ping -c 3 archlinux.org > /dev/null
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mConnected to the internet.\033[0m\n'
-else
-    echo -e '\033[31mConnection to the internet failed.\033[0m\n'
-    echo -e '\033[31mPlease check your internet connection and try again.\033[0m\n'
-    exit 1
-fi
-
-# Update the system clock
-echo -e '\n==============='
-echo -e 'Updating the system clock...'
-echo -e '==============='
-timedatectl set-ntp true
-timedatectl status | grep 'System clock synchronized: yes' > /dev/null
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mClock is synchronized.\033[0m\n'
-else
-    echo -e '\033[31mClock synchronization failed.\033[0m\n'
-    echo -e '\033[31mPlease check your internet connection and try again.\033[0m\n'
-    exit 1
-fi
-
-# Formatting the disks to remove all data and all partitions
-echo -e '==============='
-echo -e 'Removing partitions from sda...'
-echo -e '==============='
-for i in $(ls /dev/sda*); do
-    if [ "$i" != "/dev/sda" ]; then
-        echo -e "Removing partition $i ..."
-        sgdisk --zap-all $i
-        if [ $? -ne 0 ]; then
-            echo -e '\033[31mFailed to remove partition $i.\033[0m\n'
-            exit 1
-        fi
+# Fonction pour vérifier si le script est exécuté sur Arch Linux
+check_archlinux() {
+    echo -e "\n\033[1;34m[VÉRIFICATION] Le script s'exécute-t-il sur Arch Linux ?\033[0m"
+    if [ -f /etc/arch-release ]; then
+        echo -e "\033[1;32m[OK] Le script s'exécute sur Arch Linux.\033[0m"
+    else
+        echo -e "\033[1;31m[ERREUR] Ce script doit être exécuté sur Arch Linux.\033[0m"
+        exit 1
     fi
-done
-echo -e '\033[32mSuccessfully removed all partitions from sda.\033[0m\n'
+}
 
+# Fonction pour configurer le clavier
+configure_keyboard() {
+    echo -e "\n\033[1;34m[CONFIGURATION] Configuration du clavier\033[0m"
+    read -p "Disposition du clavier (par défaut 'fr') : " keyboard_layout
+    keyboard_layout=${keyboard_layout:-fr}
+    if loadkeys "$keyboard_layout"; then
+        echo -e "\033[1;32m[OK] Disposition du clavier définie sur '$keyboard_layout'.\033[0m"
+    else
+        echo -e "\033[1;31m[ERREUR] Impossible de définir la disposition du clavier.\033[0m"
+        exit 1
+    fi
+}
 
-# Get user infos
-echo -e '\n==============='
-echo -e 'Enter your user informations:'
-echo -e '===============\n'
-echo -e 'Username: '
-read username
-if [ -z $username ]; then
-    echo -e '\033[31mUsername cannot be empty.\033[0m\n'
-    exit 1
-fi
-echo -e 'Password: '
-read -s password
-if [ -z $password ]; then
-    echo -e '\033[31mPassword cannot be empty.\033[0m\n'
-    exit 1
-fi
-echo -e 'Hostname: '
-read hostname
-if [ -z $hostname ]; then
-    echo -e '\033[31mHostname cannot be empty.\033[0m\n'
-    exit 1
-fi
+# Fonction pour vérifier la connexion internet
+check_internet() {
+    echo -e "\n\033[1;34m[CONNEXION] Vérification de la connexion internet\033[0m"
+    if ping -c 3 archlinux.org > /dev/null 2>&1; then
+        echo -e "\033[1;32m[OK] Connecté à Internet.\033[0m"
+    else
+        echo -e "\033[1;31m[ERREUR] Impossible de se connecter à Internet.\033[0m"
+        exit 1
+    fi
+}
 
-# Ask partition size
-echo -e '==============='
-echo -e 'Enter the size of the partition in MO:'
-echo -e '===============\n'
-echo -e 'Size of boot partition (default 512): '
-read boot_size
-if [[ $boot_size -lt 150 ]]; then
-    echo -e '\033[31mBoot partition size must be at least 150 MO.\033[0m\n'
-    exit 1
-fi
-if [[ -z $boot_size ]]; then
-    boot_size=512
-fi
-if [[ ! $boot_size =~ ^[0-9]+$ ]]; then
-    echo -e '\033[31mBoot partition size must be a number.\033[0m\n'
-    exit 1
-fi
-echo -e 'Size of root partition (default 1024): '
-read root_size
-if [[ $root_size -lt 1024 ]]; then
-    echo -e '\033[31mRoot partition size must be at least 1024 MO.\033[0m\n'
-    exit 1
-fi
-if [[ -z $root_size ]]; then
-    root_size=1024
-fi
-if [[ ! $root_size =~ ^[0-9]+$ ]]; then
-    echo -e '\033[31mRoot partition size must be a number.\033[0m\n'
-    exit 1
-fi
-echo -e 'Size of swap partition (default 512): '
-read swap_size
-if [[ $swap_size -lt 200 ]]; then
-    echo -e '\033[31mSwap partition size must be at least 200 MO.\033[0m\n'
-    exit 1
-fi
-if [[ -z $swap_size ]]; then
-    swap_size=512
-fi
-if [[ ! $swap_size =~ ^[0-9]+$ ]]; then
-    echo -e '\033[31mSwap partition size must be a number.\033[0m\n'
-    exit 1
-fi
-echo -e 'Size of home partition (default 1024): '
-read home_size
-if [[ $home_size -lt 1024 ]]; then
-    echo -e '\033[31mHome partition size must be at least 1024 MO.\033[0m\n'
-    exit 1
-fi
-if [[ -z $home_size ]]; then
-    home_size=1024
-fi
-if [[ ! $home_size =~ ^[0-9]+$ ]]; then
-    echo -e '\033[31mHome partition size must be a number.\033[0m\n'
-    exit 1
-fi
+# Fonction pour synchroniser l'horloge système
+synchronize_clock() {
+    echo -e "\n\033[1;34m[SYNCHRONISATION] Mise à jour de l'horloge système\033[0m"
+    timedatectl set-ntp true
+    if timedatectl status | grep -q 'System clock synchronized: yes'; then
+        echo -e "\033[1;32m[OK] Horloge synchronisée.\033[0m"
+    else
+        echo -e "\033[1;31m[ERREUR] Synchronisation de l'horloge échouée.\033[0m"
+        exit 1
+    fi
+}
 
-# Partition the disks
-echo -e '\n==============='
-echo -e 'Partitioning the disks...'
-echo -e '==============='
-fdisk /dev/sda <<EOF
-n
-p
-1
+# Fonction pour effacer les partitions sur /dev/sda
+wipe_partitions() {
+    echo -e "\n\033[1;34m[PARTITIONNEMENT] Effacement des partitions sur /dev/sda\033[0m"
+    echo -e "\033[1;31mAttention : Toutes les données sur /dev/sda seront perdues.\033[0m"
+    read -n 1 -s -r -p "Appuyez sur une touche pour confirmer..."
+    if sgdisk --zap-all /dev/sda; then
+        echo -e "\033[1;32m[OK] Partitions effacées sur /dev/sda.\033[0m"
+    else
+        echo -e "\033[1;31m[ERREUR] Échec de l'effacement des partitions sur /dev/sda.\033[0m"
+        exit 1
+    fi
+}
 
+# Fonction pour recueillir les informations utilisateur
+collect_user_info() {
+    echo -e "\n\033[1;34m[INFORMATIONS] Saisie des informations utilisateur\033[0m"
+    read -p "Nom d'utilisateur : " username
+    if [ -z "$username" ]; then
+        echo -e "\033[1;31m[ERREUR] Le nom d'utilisateur ne peut pas être vide.\033[0m"
+        exit 1
+    fi
 
-t
-8e
-i
-w
-EOF
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mDisk partitioned.\033[0m\n'
-else
-    echo -e '\033[31mDisk partitioning failed.\033[0m\n'
-    exit 1
-fi
+    read -s -p "Mot de passe : " password
+    echo
+    if [ -z "$password" ]; then
+        echo -e "\033[1;31m[ERREUR] Le mot de passe ne peut pas être vide.\033[0m"
+        exit 1
+    fi
 
-# Create the EFI System Partition
-echo -e '\n==============='
-echo -e 'Creating the EFI System Partition...'
-echo -e '==============='
-pvcreate /dev/sda1
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mLVM Partition created.\033[0m\n'
-else
-    echo -e '\033[31mLVM Partition creation failed.\033[0m\n'
-    exit 1
-fi
-vgcreate vg1 /dev/sda1
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mVolume group created.\033[0m\n'
-else
-    echo -e '\033[31mVolume group creation failed.\033[0m\n'
-    exit 1
-fi
-lvcreate -L "$boot_size"M -n boot vg1
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mBoot Partition created.\033[0m\n'
-else
-    echo -e '\033[31mBoot Partition creation failed.\033[0m\n'
-    exit 1
-fi
-lvcreate -L "$root_size"M -n root vg1
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mRoot Partition created.\033[0m\n'
-else
-    echo -e '\033[31mRoot Partition creation failed.\033[0m\n'
-    exit 1
-fi
-lvcreate -L "$swap_size"M -n swap vg1
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mSwap Partition created.\033[0m\n'
-else
-    echo -e '\033[31mSwap Partition creation failed.\033[0m\n'
-    exit 1
-fi
-lvcreate -L "$home_size"M -n home vg1
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mHome Partition created.\033[0m\n'
-else
-    echo -e '\033[31mHome Partition creation failed.\033[0m\n'
-    exit 1
-fi
+    read -p "Nom d'hôte (hostname) : " hostname
+    if [ -z "$hostname" ]; then
+        echo -e "\033[1;31m[ERREUR] Le nom d'hôte ne peut pas être vide.\033[0m"
+        exit 1
+    fi
+}
 
-# Format the partitions
-echo -e '\n==============='
-echo -e 'Formatting the partitions...'
-echo -e '==============='
-mkfs.ext4 /dev/vg1/boot
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mBoot partition formatted.\033[0m\n'
-else
-    echo -e '\033[31mBoot partition formatting failed.\033[0m\n'
-    exit 1
-fi
-mkfs.ext4 /dev/vg1/root
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mRoot partition formatted.\033[0m\n'
-else
-    echo -e '\033[31mRoot partition formatting failed.\033[0m\n'
-    exit 1
-fi
-mkfs.ext4 /dev/vg1/home
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mHome partition formatted.\033[0m\n'
-else
-    echo -e '\033[31mHome partition formatting failed.\033[0m\n'
-    exit 1
-fi
-mkswap /dev/vg1/swap
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mSwap partition formatted.\033[0m\n'
-else
-    echo -e '\033[31mSwap partition formatting failed.\033[0m\n'
-    exit 1
-fi
-swapon /dev/vg1/swap
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mSwap partition activated.\033[0m\n'
-else
-    echo -e '\033[31mSwap partition activation failed.\033[0m\n'
-    exit 1
-fi
+# Fonction pour définir les tailles des partitions
+define_partition_sizes() {
+    echo -e "\n\033[1;34m[PARTITIONS] Définition des tailles des partitions (en Mo)\033[0m"
+    read -p "Taille de la partition /boot (par défaut 512) : " boot_size
+    boot_size=${boot_size:-512}
+    if ! [[ "$boot_size" =~ ^[0-9]+$ ]] || [ "$boot_size" -lt 150 ]; then
+        echo -e "\033[1;31m[ERREUR] Taille de /boot invalide (minimum 150 Mo).\033[0m"
+        exit 1
+    fi
 
+    read -p "Taille de la partition / (root) (par défaut 20480) : " root_size
+    root_size=${root_size:-20480}
+    if ! [[ "$root_size" =~ ^[0-9]+$ ]] || [ "$root_size" -lt 1024 ]; then
+        echo -e "\033[1;31m[ERREUR] Taille de / invalide (minimum 1024 Mo).\033[0m"
+        exit 1
+    fi
 
-# Mount the file systems
-echo -e '\n==============='
-echo -e 'Mounting the file systems...'
-echo -e '==============='
-mount /dev/vg1/root /mnt
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mFile root systems mounted.\033[0m\n'
-else
-    echo -e '\033[31mFile root systems mounting failed.\033[0m\n'
-    exit 1
-fi
-mkdir /mnt/boot
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mFile boot systems mounted.\033[0m\n'
-else
-    echo -e '\033[31mFile boot systems creating failed.\033[0m\n'
-    exit 1
-fi
-mount /dev/vg1/boot /mnt/boot
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mFile boot systems created.\033[0m\n'
-else
-    echo -e '\033[31mFile boot systems mounting failed.\033[0m\n'
-    exit 1
-fi
-mkdir /mnt/home
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mFile home systems created.\033[0m\n'
-else
-    echo -e '\033[31mFile home systems creating failed.\033[0m\n'
-    exit 1
-fi
-mount /dev/vg1/home /mnt/home
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mFile home systems mounted.\033[0m\n'
-else
-    echo -e '\033[31mFile home systems mounting failed.\033[0m\n'
-    exit 1
-fi
+    read -p "Taille de la partition swap (par défaut 2048) : " swap_size
+    swap_size=${swap_size:-2048}
+    if ! [[ "$swap_size" =~ ^[0-9]+$ ]] || [ "$swap_size" -lt 512 ]; then
+        echo -e "\033[1;31m[ERREUR] Taille de swap invalide (minimum 512 Mo).\033[0m"
+        exit 1
+    fi
 
-# Install essential packages
-echo -e '\n==============='
-echo -e 'Installing essential packages...'
-echo -e '==============='
-pacstrap /mnt base base-devel
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mEssential packages installed.\033[0m\n'
-else
-    echo -e '\033[31mEssential packages installation failed.\033[0m\n'
-    exit 1
-fi
+    # Calcul de la taille restante pour /home
+    disk_size=$(lsblk -b -dn -o SIZE /dev/sda)
+    used_size=$(($boot_size * 1024 * 1024 + $root_size * 1024 * 1024 + $swap_size * 1024 * 1024 + 512 * 1024 * 1024)) # 512M pour l'EFI
+    home_size=$(( ($disk_size - $used_size) / (1024 * 1024) ))
 
-# Generate an fstab file
-echo -e '\n==============='
-echo -e 'Generating an fstab file...'
-echo -e '==============='
-genfstab -U /mnt >> /mnt/etc/fstab
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mFstab file generated.\033[0m\n'
-else
-    echo -e '\033[31mFstab file generation failed.\033[0m\n'
-    exit 1
-fi
+    if [ "$home_size" -lt 1024 ]; then
+        echo -e "\033[1;31m[ERREUR] Espace insuffisant pour la partition /home.\033[0m"
+        exit 1
+    fi
 
-# Chroot
-echo -e '\n==============='
-echo -e 'Chrooting...'
-echo -e '==============='
-arch-chroot /mnt /bin/bash <<EOF
-echo -e "$hostname" > /etc/hostname
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mHostname set.\033[0m\n'
-else
-    echo -e '\033[31mHostname setting failed.\033[0m\n'
-    exit 1
-fi
-echo -e 'fr_FR.UTF-8 UTF-8' > /etc/locale.gen
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mLocale generated.\033[0m\n'
-else
-    echo -e '\033[31mLocale generation failed.\033[0m\n'
-    exit 1
-fi
+    echo -e "\033[1;32m[OK] Taille de /home définie à ${home_size} Mo.\033[0m"
+}
+
+# Fonction pour créer les partitions
+create_partitions() {
+    echo -e "\n\033[1;34m[PARTITIONNEMENT] Création de la table de partition\033[0m"
+    (
+    echo g # Créer une nouvelle table de partition GPT
+    echo n # Nouvelle partition (EFI)
+    echo   # Partition par défaut (1)
+    echo   # Premier secteur par défaut
+    echo +512M # Taille de la partition EFI
+    echo t
+    echo 1 # Type EFI
+
+    echo n # Nouvelle partition (/boot)
+    echo   # Partition par défaut (2)
+    echo   # Premier secteur par défaut
+    echo +${boot_size}M # Taille de /boot
+
+    echo n # Nouvelle partition (root)
+    echo   # Partition par défaut (3)
+    echo   # Premier secteur par défaut
+    echo +${root_size}M # Taille de /
+
+    echo n # Nouvelle partition (swap)
+    echo   # Partition par défaut (4)
+    echo   # Premier secteur par défaut
+    echo +${swap_size}M # Taille de swap
+
+    echo n # Nouvelle partition (/home)
+    echo   # Partition par défaut (5)
+    echo   # Premier secteur par défaut
+    echo   # Dernier secteur par défaut (reste du disque pour /home)
+
+    echo w # Écrire les modifications
+    ) | fdisk /dev/sda
+
+    if [ $? -eq 0 ]; then
+        echo -e "\033[1;32m[OK] Table de partition créée.\033[0m"
+    else
+        echo -e "\033[1;31m[ERREUR] Échec de la création de la table de partition.\033[0m"
+        exit 1
+    fi
+}
+
+# Fonction pour formater les partitions
+format_partitions() {
+    echo -e "\n\033[1;34m[FORMATAGE] Formatage des partitions\033[0m"
+    mkfs.fat -F32 /dev/sda1 && echo -e "\033[1;32m[OK] /dev/sda1 formatée en FAT32 (EFI).\033[0m"
+    mkfs.ext4 /dev/sda2 && echo -e "\033[1;32m[OK] /dev/sda2 formatée en ext4 (/boot).\033[0m"
+    mkfs.ext4 /dev/sda3 && echo -e "\033[1;32m[OK] /dev/sda3 formatée en ext4 (/).\033[0m"
+    mkfs.ext4 /dev/sda5 && echo -e "\033[1;32m[OK] /dev/sda5 formatée en ext4 (/home).\033[0m"
+    mkswap /dev/sda4 && echo -e "\033[1;32m[OK] /dev/sda4 formatée en swap.\033[0m"
+    swapon /dev/sda4 && echo -e "\033[1;32m[OK] Swap activée.\033[0m"
+}
+
+# Fonction pour monter les partitions
+mount_partitions() {
+    echo -e "\n\033[1;34m[MONTAGE] Montage des partitions\033[0m"
+    mount /dev/sda3 /mnt && echo -e "\033[1;32m[OK] / montée.\033[0m"
+    mkdir -p /mnt/boot && mount /dev/sda2 /mnt/boot && echo -e "\033[1;32m[OK] /boot montée.\033[0m"
+    mkdir -p /mnt/boot/efi && mount /dev/sda1 /mnt/boot/efi && echo -e "\033[1;32m[OK] Partition EFI montée.\033[0m"
+    mkdir -p /mnt/home && mount /dev/sda5 /mnt/home && echo -e "\033[1;32m[OK] /home montée.\033[0m"
+}
+
+# Fonction pour installer les paquets essentiels
+install_base_packages() {
+    echo -e "\n\033[1;34m[INSTALLATION] Installation des paquets essentiels\033[0m"
+    pacstrap /mnt base base-devel linux linux-firmware vim nano
+
+    if [ $? -eq 0 ]; then
+        echo -e "\033[1;32m[OK] Paquets essentiels installés.\033[0m"
+    else
+        echo -e "\033[1;31m[ERREUR] Échec de l'installation des paquets essentiels.\033[0m"
+        exit 1
+    fi
+}
+
+# Fonction pour générer le fichier fstab
+generate_fstab() {
+    echo -e "\n\033[1;34m[FSTAB] Génération du fichier fstab\033[0m"
+    genfstab -U /mnt >> /mnt/etc/fstab
+    echo -e "\033[1;32m[OK] Fichier fstab généré.\033[0m"
+}
+
+# Fonction pour configurer le système dans chroot
+configure_system() {
+    echo -e "\n\033[1;34m[CONFIGURATION] Configuration du système\033[0m"
+
+    # Créer un script de configuration à exécuter dans chroot
+    cat <<EOF > /mnt/root/arch_install.sh
+#!/bin/bash
+
+# Configuration du fuseau horaire
+ln -sf /usr/share/zoneinfo/Europe/Paris /etc/localtime
+hwclock --systohc
+
+# Localisation
+echo "fr_FR.UTF-8 UTF-8" > /etc/locale.gen
 locale-gen
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mLocale generated.\033[0m\n'
-else
-    echo -e '\033[31mLocale generation failed.\033[0m\n'
-    exit 1
-fi
-echo -e 'LANG=fr_FR.UTF-8' > /etc/locale.conf
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mLocale set.\033[0m\n'
-else
-    echo -e '\033[31mLocale setting failed.\033[0m\n'
-    exit 1
-fi
-echo -e 'KEYMAP=fr' > /etc/vconsole.conf
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mKeymap set.\033[0m\n'
-else
-    echo -e '\033[31mKeymap setting failed.\033[0m\n'
-    exit 1
-fi
-ln -s /usr/share/zoneinfo/Europe/Paris /etc/localtime
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mTimezone set.\033[0m\n'
-else
-    echo -e '\033[31mTimezone setting failed.\033[0m\n'
-    exit 1
-fi
-hwclock --systohc --utc
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mHardware clock set.\033[0m\n'
-else
-    echo -e '\033[31mHardware clock setting failed.\033[0m\n'
-    exit 1
-fi
-pacman -S --noconfirm xorg-server xorg-xinit xorg-xrandr xorg-xsetroot xorg-xset xf86-video-intel i3-gaps i3status i3lock i3blocks dmenu rxvt-unicode firefox alsa-utils pulseaudio pulseaudio-alsa pavucontrol feh scrot rofi ttf-dejavu ttf-liberation ttf-ubuntu-font-family lvm2 mdadm mkinitcpio linux linux-firmware linux-headers dosfstools grub efibootmgr networkmanager xfce4 xfce4-goodies lightdm lightdm-gtk-greeter iw wpa_supplicant dialog 2>&1 | tee /tmp/pacman.log
-if [ $? -ne 0 ]; then
-    echo -e '\033[31mOne or more package installation failed.\033[0m\n'
-    echo -e '\033[31mFailed packages: \033[0m\n'
-    grep "error:" /tmp/pacman.log
-    rm /tmp/pacman.log
-    exit 1
-else
-    echo -e '\033[32mAll packages installed.\033[0m\n'
-    rm /tmp/pacman.log
-fi
+echo "LANG=fr_FR.UTF-8" > /etc/locale.conf
+echo "KEYMAP=$keyboard_layout" > /etc/vconsole.conf
 
-echo 'HOOKS="consolefont keyboard keymap base udev modconf block mdadm_udev encrypt lvm2 resume filesystems autodetect shutdown"' > /etc/mkinitcpio.conf
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mMkinitcpio hooks configured.\033[0m\n'
-else
-    echo -e '\033[31mMkinitcpio hooks configuration failed.\033[0m\n'
-    exit 1
-fi
+# Nom d'hôte
+echo "$hostname" > /etc/hostname
+cat <<HOSTS > /etc/hosts
+127.0.0.1    localhost
+::1          localhost
+127.0.1.1    $hostname.localdomain $hostname
+HOSTS
 
-mkinitcpio -p linux
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mLinux initcpio generated.\033[0m\n'
-else
-    echo -e '\033[31mLinux initcpio generation failed.\033[0m\n'
-    exit 1
-fi
-echo -e 'root:$password' | chpasswd
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mRoot password set.\033[0m\n'
-else
-    echo -e '\033[31mRoot password setting failed.\033[0m\n'
-    exit 1
-fi
-useradd -m -g users -G wheel -s /bin/bash "$username"
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mUser created.\033[0m\n'
-else
-    echo -e '\033[31mUser creation failed.\033[0m\n'
-    exit 1
-fi
-echo -e "$username:$password" | chpasswd
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mUser password set.\033[0m\n'
-else
-    echo -e '\033[31mUser password setting failed.\033[0m\n'
-    exit 1
-fi
-echo -e '%wheel ALL=(ALL) ALL' >> /etc/sudoers
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mSudoers file edited.\033[0m\n'
-else
-    echo -e '\033[31mSudoers file edition failed.\033[0m\n'
-    exit 1
-fi
-grub-install --target=i386-pc /dev/sda
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mGrub installed.\033[0m\n'
-else
-    echo -e '\033[31mGrub installation failed.\033[0m\n'
-    exit 1
-fi
+# Installation de GRUB
+pacman --noconfirm -S grub efibootmgr os-prober
+grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB
 grub-mkconfig -o /boot/grub/grub.cfg
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mGrub config generated.\033[0m\n'
-else
-    echo -e '\033[31mGrub config generation failed.\033[0m\n'
-    exit 1
-fi
-systemctl enable NetworkManager
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mNetworkManager enabled.\033[0m\n'
-else
-    echo -e '\033[31mNetworkManager enabling failed.\033[0m\n'
-    exit 1
-fi
-timedatectl set-timezone Europe/Paris
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mTimezone set.\033[0m\n'
-else
-    echo -e '\033[31mTimezone setting failed.\033[0m\n'
-    exit 1
-fi
-tzdata-country-clock -c France
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mTimezone set.\033[0m\n'
-else
-    echo -e '\033[31mTimezone setting failed.\033[0m\n'
-    exit 1
-fi
-systemctl enable lightdm
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mLightdm enabled.\033[0m\n'
-else
-    echo -e '\033[31mLightdm enabling failed.\033[0m\n'
-    exit 1
-fi
-echo -e 'exec startxfce4' >> /home/"$username"/.xinitrc
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mXfce4 set as default desktop environment.\033[0m\n'
-else
-    echo -e '\033[31mXfce4 setting as default desktop environment failed.\033[0m\n'
-    exit 1
-fi
-echo -e 'Section "InputClass"
-    Identifier "system-keyboard"
-    MatchIsKeyboard "on"
-    Option "XkbLayout" "'"$keyboard_layout"'"
-EndSection' > /etc/X11/xorg.conf.d/00-keyboard.conf
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mXfce4 keymaps set.\033[0m\n'
-else
-    echo -e '\033[31mXfce4 keymaps setting failed.\033[0m\n'
-    exit 1
-fi
-EOF
-if [ $? -eq 0 ]; then
-    echo -e '\033[32mChrooted.\033[0m\n'
-else
-    echo -e '\033[31mChrooting failed.\033[te0m\n'
-    exit 1
-fi
 
-# Reboot
-echo -e '\n==============='
-echo -e 'Installation finished.'
-echo -e '==============='
-echo -e 'Thank you for using this script.'
-echo -e 'Check the script on https://github.com/Guigui1901/YAALI/'
-echo -e '==============='
-echo -e 'Press any key to reboot.'
-read -n 1
-umount -R /mnt
-reboot
+# Mot de passe root
+echo "root:$password" | chpasswd
+
+# Création de l'utilisateur
+useradd -m -G wheel -s /bin/bash "$username"
+echo "$username:$password" | chpasswd
+echo "%wheel ALL=(ALL) ALL" >> /etc/sudoers
+
+# Activer les services nécessaires
+pacman --noconfirm -S networkmanager
+systemctl enable NetworkManager
+
+# Nettoyage
+rm /root/arch_install.sh
+EOF
+
+    # Rendre le script exécutable et l'exécuter dans chroot
+    chmod +x /mnt/root/arch_install.sh
+    arch-chroot /mnt /root/arch_install.sh
+}
+
+# Fonction principale
+main() {
+    display_logo
+    check_archlinux
+    configure_keyboard
+    check_internet
+    synchronize_clock
+    wipe_partitions
+    collect_user_info
+    define_partition_sizes
+    create_partitions
+    format_partitions
+    mount_partitions
+    install_base_packages
+    generate_fstab
+    configure_system
+
+    # Fin de l'installation
+    echo -e "\n\033[1;32m[FIN] Installation terminée avec succès !\033[0m"
+    echo -e "Vous pouvez redémarrer votre système."
+
+    # Demander à l'utilisateur de redémarrer
+    read -n 1 -s -r -p "Appuyez sur une touche pour redémarrer..."
+    umount -R /mnt
+    swapoff -a
+    reboot
+}
+
+# Exécuter la fonction principale
+main
