@@ -11,7 +11,7 @@ display_logo() {
 ░╚████╔╝░███████║███████║██║░░░░░██║
 ░░╚██╔╝░░██╔══██║██╔══██║██║░░░░░██║
 ░░░██║░░░██║░░██║██║░░██║███████╗██║
-░░░╚═╝░░░╚═╝░░╚═╝╚═╝░░╚═╝╚══════╝╚═╝ v0.18\033[0m"
+░░░╚═╝░░░╚═╝░░╚═╝╚═╝░░╚═╝╚══════╝╚═╝ v0.19\033[0m"
 
     echo -e "\033[1;34m========================================\033[0m"
     echo -e "Ce script va installer Arch Linux sur votre ordinateur."
@@ -59,7 +59,13 @@ check_internet() {
 synchronize_clock() {
     echo -e "\n\033[1;34m[SYNCHRONISATION] Mise à jour de l'horloge système\033[0m"
     timedatectl set-ntp true
-    if timedatectl status | grep -q 'System clock synchronized: yes'; then
+
+    # Exécuter la commande et stocker le code de retour
+    timedatectl status | grep -q 'System clock synchronized: yes'
+    GREP_EXIT_STATUS=$?
+    TIMEDATECTL_EXIT_STATUS=${PIPESTATUS[0]}
+
+    if [ $GREP_EXIT_STATUS -eq 0 ] || [ $TIMEDATECTL_EXIT_STATUS -eq 0 ]; then
         echo -e "\033[1;32m[OK] Horloge synchronisée.\033[0m"
     else
         echo -e "\033[1;31m[ERREUR] Synchronisation de l'horloge échouée.\033[0m"
