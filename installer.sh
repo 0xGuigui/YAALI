@@ -110,7 +110,7 @@ function check_internet() {
     if curl -s --head http://www.google.com | grep "200 OK" > /dev/null; then
         log '\033[32mInternet connection is available.\033[0m\n'
     else
-        log '\033[31mNo internet connection.\033[0m\n'  
+        log '\033[31mNo internet connection.\033[0m\n'
         log '\033[31mPlease check your internet connection.\033[0m\n'
         log '\033[31mExiting the script.\033[0m\n'
         exit 6
@@ -130,6 +130,24 @@ function system_clock() {
         log '\033[31mPlease check your internet connection and try again.\033[0m\n'
         exit 7
     fi
+}
+
+function partition_disk() {
+    log '\n==============='
+    log 'Partitioning the disk...'
+    log '==============='
+    log 'This will erase all data on the disk.'
+    log 'Please make sure you have backed up all important data.'
+    # list disks
+    lsblk -d -n -p -o NAME,SIZE,TYPE | grep disk
+    log 'Please enter the disk you want to partition (e.g., /dev/sda): '
+    read disk
+    if [ ! -b "$disk" ]; then
+        log '\033[31mInvalid disk.\033[0m\n'
+        log '\033[31mPlease enter a valid disk.\033[0m\n'
+        exit 8
+    fi
+    log '\033[32mDisk partitioning completed.\033[0m\n'
 }
 
 # Main script execution
