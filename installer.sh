@@ -521,7 +521,7 @@ echo -e '\n==============='
 echo -e 'Installation finished.'
 echo -e '==============='
 echo -e 'Thank you for using this script.'
-echo -e 'Check the script on https://github.com/Guigui1901/YAALI/'
+echo -e 'Check the script on https://github.com/mflr01901/YAALI/'
 echo -e '==============='
 echo -e 'Press any key to reboot.'
 read -n 1

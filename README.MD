@@ -11,7 +11,7 @@ This script automates the installation process of Arch Linux on your computer. I
 ## 💬 Usage
 First, boot into the Arch Linux installation media. Then, download the script and run it:
 ```bash
-curl -L https://raw.githubusercontent.com/Guigui1901/YAALI/main/installer.sh > installer.sh && chmod +x installer.sh && ./installer.sh
+curl -L https://raw.githubusercontent.com/mflr01901/YAALI/main/installer.sh > installer.sh && chmod +x installer.sh && ./installer.sh
 ```
 
 Next, just follow the instructions on the screen. The script will guide you through the installation process.
@@ -46,4 +46,4 @@ This script is licensed under the MIT License. See the LICENSE file for more inf
 This script is based on the Arch Linux installation guide from official Arch Linux documentation. It also uses the Arch Linux installation script from the Arch Linux Wiki.
 
 ## ✏️ Author
-- [0xGuigui](https://github.com/0xGuigui)
+- [mflr0](https://github.com/mflr0)
